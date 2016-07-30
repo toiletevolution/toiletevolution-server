@@ -76,24 +76,6 @@ $app->group('/auth/{provider}', function() use($app) {
         exit('Something went wrong: ' . $e->getMessage());
       }
 
-      //    Hello 健一郎!object(League\OAuth2\Client\Token\AccessToken)#89 (5) {
-      //      ["accessToken":protected]=&gt;
-      //    string(75) "ya29.CjLlAh71PeuQMVu0fZkjHkghlYzagc8z1QDbjk53y9fcAchK8wURlghFp5CmZztZvLmtyw"
-      //      ["expires":protected]=&gt;
-      //    int(1463455808)
-      //      ["refreshToken":protected]=&gt;
-      //    NULL
-      //      ["resourceOwnerId":protected]=&gt;
-      //    NULL
-      //      ["values":protected]=&gt;
-      //    array(2) {
-      //      ["token_type"]=&gt;
-      //      string(6) "Bearer"
-      //        ["id_token"]=&gt;
-      //      string(909) "eyJhbGciOiJSUzI1NiIsImtpZCI6IjUyNDNiNDI5ZGUxOGY0NTY4NTYwOTMwNDY3NDBlMDU2NjRjNDI5OTYifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXRfaGFzaCI6Il9wWGhrQ1M5ZUVhTENuNnF5Q2tjTnciLCJhdWQiOiI4MjU4MjQ1NjIwNTQtMjNmdXBuZWoxdjIxMHJpcnJuODB2YWcxOWI4bnVhdWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDQ0MDExODA2Nzc0MzMyMTM2NzciLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXpwIjoiODI1ODI0NTYyMDU0LTIzZnVwbmVqMXYyMTByaXJybjgwdmFnMTliOG51YXVkLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiaGQiOiJlc20uY28uanAiLCJlbWFpbCI6Imsta2lzaGlkYUBlc20uY28uanAiLCJpYXQiOjE0NjM0NTIyMTAsImV4cCI6MTQ2MzQ1NTgxMH0.EvONgq9eA6PIPlVzOBHzedhxEcx_udGLE-4hqQUygi8tYZSqIbbAsvLKNC5yT4tE7vztmv8lb__PZ3LqIaaJYJ_PvsDWukxjoiWwjSIl9OjHRsvl1I_jbS_T7xAJXta_SM1GUpj6aV15DxaYJ8TA4TveO6ozaC5u8LDAszsAMJPoOqVn2gxOMQcGgwXu0YScfHCfEFZ5yW2JLWr1EX2g5yO2L25zRXkoALMNT8LvsKwsEcVE4cawrYQhHO0LZS_AubBd5IREOu7iFWIiqP0E5BhsZDTOzDw7IJKwEwgj3rCkNLWWZAsFUMzlvtsu1TozSDBCcKulWcNJwvQ9zL69UQ"
-      //    }
-      //  }
-
     }  
   });
   
