@@ -1,0 +1,48 @@
+application: toiletevolution
+version: 1
+runtime: php55
+api_version: 1
+threadsafe: true
+
+skip_files:
+- ^(.*/)?composer\.(phar|lock|json)$
+- ^(node_modules/.*)
+- logs
+- ^\.(bowerrc|editorconfig|gitignore)
+- bower.json
+- package.json
+- polymer.json
+
+handlers:
+- url: /favicon\.ico
+  static_files: public/favicon.ico
+  upload: public/favicon.ico
+
+- url: /bower_components
+  static_dir: public/bower_components
+
+- url: /images
+  static_dir: public/images
+
+- url: /(.*).(html|js|json|css)
+  static_files: public/\1.\2
+  upload: public/(.*)\.(html|js|json|css)
+
+- url: /(api|admin|auth)/.*
+  script: public/index.php
+
+- url: /index\.php
+  script: public/index.php
+
+- url: /
+  static_files: public/index.html
+  upload: public/index.html
+  http_headers:
+    # Link: '</scripts/app.js>; rel=preload; as=script, </elements/elements.html>; rel=preload; as=document, </styles/main.css>; rel=preload; as=style'
+    # Access-Control-Allow-Origin: "*"
+
+automatic_scaling:
+  min_idle_instances: automatic
+  max_idle_instances: 1
+  min_pending_latency: 5000ms
+  max_pending_latency: automatic

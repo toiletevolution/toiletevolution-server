@@ -1,0 +1,38 @@
+{
+  "name": "toiletevolution",
+  "version": "1.0.0",
+  "description": "Toilet Evolution Frontend Application",
+  "main": "index.js",
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp serve",
+    "postinstall": "bower install",
+    "debug": "gulp debug",
+    "build": "gulp build"
+  },
+  "author": {
+    "name": "Kenichiro Kishida",
+    "email": "sizuhiko@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bower": "^1.7.9",
+    "browser-sync": "^2.12.10",
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-gae": "0.0.4",
+    "gulp-remote-src": "^0.4.1",
+    "gulp-touch": "^1.0.1",
+    "hydrolysis": "^1.24.1",
+    "loop": "^2.1.2",
+    "polymer-cli": "^0.12.0",
+    "run-sequence": "^1.2.1",
+    "tcp-ping": "^0.1.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "^4.2.2"
+  }
+}

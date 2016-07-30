@@ -1,0 +1,40 @@
+{
+  "title": "User Model Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    },
+    "thresholds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string",
+            "pattern": "^gt|eq|lt$"
+          },
+          "required": ["value", "condition"]
+        }
+      },
+      "minItems": 1
+    },
+    "location": {
+      "description": "A geographical coordinate",
+      "type": "object",
+      "properties": {
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" }
+      },
+      "required": ["latitude", "longitude"]
+    }
+  },
+  "required": ["name", "password", "thresholds", "location"]
+}
+

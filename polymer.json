@@ -1,0 +1,9 @@
+{
+  "entrypoint": "public/index.html",
+  "shell": "public/elements/te-app.html",
+  "fragments": [
+    "public/elements/te-devices.html",
+    "public/elements/te-admin.html",
+    "public/elements/te-login.html"
+  ]
+}

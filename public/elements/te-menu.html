@@ -1,0 +1,108 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/excess-router/excess-router.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/notification-icons.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-shared-styles.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-menu/paper-submenu.html">
+
+<dom-module id="te-menu">
+
+  <template>
+    <style include="paper-item-shared-styles"></style>
+
+    <style>
+
+      :host {
+        display: block;
+      }
+      .menu-content paper-item {
+        padding-left: 48px;
+      }
+      .menu-content a {
+        color: var(--menu-link-color);
+        text-decoration: none;
+      }
+      .menu-content a.iron-selected paper-item {
+        font-weight: var(--paper-item-selected-weight, bold);
+
+        @apply(--paper-item-selected);
+      }
+    </style>
+
+    <excess-route route="/:page/(.*)?" page="{{page}}"></excess-route>
+    <excess-route route="/devices/:id?"       id="{{deviceId}}"></excess-route>
+    <excess-route route="/admin/devices/:id?" id="{{deviceId}}"></excess-route>
+    <excess-route route="/admin/device/add"   active="{{addDevice}}"></excess-route>
+    <excess-route route="/:page(bookmark|about|login)" page="{{page}}"></excess-route>
+    <excess-route route="/(.*)" redirect-to="/devices" activation-modifiers="x"></excess-route>
+
+    <paper-menu attr-for-item-title="label" class="horizontal-section">
+      <paper-submenu label="toilets">
+        <paper-icon-item class="menu-trigger"><iron-icon icon="notification:wc" item-icon></iron-icon>トイレの空き状況</paper-icon-item>
+        <paper-menu class="menu-content" selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a href="#/devices" name="devices"><paper-item name="devices">トイレ一覧</paper-item></a>
+          <a href="#/bookmark" name="bookmark"><paper-item>お気に入り</paper-item></a>
+          <a href="#/about" name="about"><paper-item>Toilet Evolutionについて</paper-item></a>
+        </paper-menu>
+      </paper-submenu>
+      <paper-submenu label="settings">
+        <paper-icon-item class="menu-trigger"><iron-icon icon="icons:settings" item-icon></iron-icon>デバイス管理</paper-icon-item>
+        <paper-menu class="menu-content" selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a href="#/admin/devices" name="admin"><paper-item>登録済みトイレ一覧</paper-item></a>
+          <a href="#/login" name="login"><paper-item>ログイン</paper-item></a>
+        </paper-menu>
+      </paper-submenu>
+    </paper-menu>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'te-menu',
+
+      properties: {
+
+        page: {
+          type: String,
+          observer: '_pageChanged',
+          notify: true
+        },
+        deviceId: {
+          type: String,
+          notify: true
+        },
+        addDevice: {
+          type: Boolean,
+          notify: true
+        },
+        selectedTitle: {
+          type: String,
+          notify: true
+        }
+
+      },
+
+      _pageChanged: function(page) {
+        // load page import on demand.
+        this.importHref(
+          this.resolveUrl('te-' + page + '.html'), null, null, true);
+        var submenu = ({devices: 'toilets', bookmark: 'toilets', about: 'toilets', admin: 'settings', login: 'settings'})[page];
+        this.$$('paper-submenu[label='+submenu+']').open();
+        this.selectedTitle = ({devices: 'トイレの空き状況', bookmark: 'お気に入り', about: 'Toilet Evolutionについて', admin: 'デバイス管理', login: 'ログイン'})[page];
+      },
+
+      ready: function() {
+        Excess.RouteManager.start();
+      }
+
+    });
+
+  </script>
+
+</dom-module>

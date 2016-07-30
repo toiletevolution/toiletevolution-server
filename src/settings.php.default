@@ -1,0 +1,19 @@
+<?php
+return [
+    'settings' => [
+        'displayErrorDetails' => true, // set to false in production
+
+        // Monolog settings
+        'logger' => [
+            'name' => 'toilet-evolution',
+        ],
+        
+        'oauth' => [
+            'clientId'     => 'PLEASE SET YOUR CLIENT ID',
+            'clientSecret' => 'PLEASE SET YOUR CLIENT SECRET',
+            'redirectUri'  => 'http://localhost:8888/auth/google/callback', // PLEASE CHANGE URI
+            'hostedDomain' => 'http://localhost:8888',                      // PLEASE CHANGE DOMAIN
+        ],
+        
+    ],
+];
