@@ -15,6 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/excess-router/excess-router.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
@@ -75,7 +76,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <iron-icon class="logo" src="../images/logo.png"></iron-icon>
           <div class="title">Toilet Evolution</div>
         </app-toolbar>
-        <te-menu page="{{page}}" device-id="{{deviceId}}" add-device="{{addDevice}}" selected-title="{{title}}"></te-menu>
+        <te-menu page="{{page}}" device-id="{{deviceId}}" add-device="{{addDevice}}" selected-title="{{title}}" user="{{currentUser}}"></te-menu>
       </app-drawer>
 
       <!-- Main content -->
@@ -98,6 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </app-header-layout>
 
     </app-drawer-layout>
+    <iron-ajax auto id="ajax_current_user" url="/api/user/current" handle-as="json" method="GET" last-response="{{currentUser}}"></iron-ajax>
 
   </template>
 
@@ -106,13 +108,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
 
       is: 'te-app',
+      properties: {
+        currentUser: {
+          type: Object
+        }
+      },
       listeners: {
         'te-device-created': 'reload',
-        'te-device-deleted': 'reload'
+        'te-device-deleted': 'reload',
+        'excess-route-will-activate': 'routeChange'
       },
       reload: function() {
         this.$$('te-devices').reload();
       },
+      routeChange: function(e) {
+        if(!this.currentUser && e.detail.transaction.destinations[0].routeParams.page == 'admin') {
+          e.detail.transaction.abort({redirectTo: '/login'});
+        }
+        if(!this.currentUser && e.detail.transaction.destinations[0].routeParams.page == 'logined') {
+          e.detail.transaction.abort();
+          this.listen(this.$.ajax_current_user, 'response', 'logined');
+          this.$.ajax_current_user.generateRequest();
+        }
+      },
+      logined: function() {
+        this.unlisten(this.$.ajax_current_user, 'response', 'logined');
+        location.href = '/#/admin/devices';
+      }
 
     });
 

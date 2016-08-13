@@ -53,9 +53,15 @@
         <paper-icon-item class="menu-trigger"><iron-icon icon="icons:settings" item-icon></iron-icon>デバイス管理</paper-icon-item>
         <paper-menu class="menu-content" selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a href="#/admin/devices" name="admin"><paper-item>登録済みトイレ一覧</paper-item></a>
-          <a href="#/login" name="login"><paper-item>ログイン</paper-item></a>
+          <template is="dom-if" if="{{notExists(user)}}">
+            <a href="#/login" name="login"><paper-item>ログイン</paper-item></a>
+          </template>
         </paper-menu>
       </paper-submenu>
+      <template is="dom-if" if="{{!notExists(user)}}">
+        <paper-icon-item><iron-icon src="{{user.avatar}}" item-icon></iron-icon>{{user.name}}</paper-icon-item>
+      </template>
+
     </paper-menu>
 
   </template>
@@ -84,6 +90,9 @@
         selectedTitle: {
           type: String,
           notify: true
+        },
+        user: {
+          type: Object
         }
 
       },
@@ -95,6 +104,9 @@
         var submenu = ({devices: 'toilets', bookmark: 'toilets', about: 'toilets', admin: 'settings', login: 'settings'})[page];
         this.$$('paper-submenu[label='+submenu+']').open();
         this.selectedTitle = ({devices: 'トイレの空き状況', bookmark: 'お気に入り', about: 'Toilet Evolutionについて', admin: 'デバイス管理', login: 'ログイン'})[page];
+      },
+      notExists: function(user) {
+        return !user;
       },
 
       ready: function() {

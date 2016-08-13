@@ -41,7 +41,7 @@ $app->group('/auth/{provider}', function() use($app) {
     $auth = "${args['provider']}OAuth";
     $authUrl = $this->$auth->getAuthorizationUrl();
     $this->session->oauth2state = $this->$auth->getState();
-    $this->session->oauthCallback = empty($request->getQueryParams()['callback'])? '/#/admin/devices' : $request->getQueryParams()['callback'];
+    $this->session->oauthCallback = empty($request->getQueryParams()['callback'])? '/#/logined' : $request->getQueryParams()['callback'];
     return $response
       ->withStatus(302)
       ->withHeader('Location', $authUrl);
