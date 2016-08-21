@@ -3,6 +3,7 @@ version: 1
 runtime: php55
 api_version: 1
 threadsafe: true
+module: default
 
 skip_files:
 - ^(.*/)?composer\.(phar|lock|json)$

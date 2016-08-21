@@ -13,6 +13,7 @@ var exec = require('child_process').exec;
 var tcpp = require('tcp-ping');
 var loop = require('loop')();
 var remoteSrc = require('gulp-remote-src');
+var replace = require('gulp-replace');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -48,8 +49,16 @@ gulp.task('build', ['copy-tmp'], function (cb) {
   });
 });
 
+gulp.task('deploy', ['build'], function () {
+  gulp.src('.tmp/build/bundled/app.yaml')
+    .pipe(gae('appcfg.py', ['update'], {
+      version: 'v1',
+      oauth2: undefined // for value-less parameters 
+    }));
+});
+
 gulp.task('copy-tmp', function(cb) {
-  runSequence('copy-public', 'copy-src', 'copy-vendor', 'copy-etc', 'hotfix-build', cb);
+  runSequence('copy-public', 'copy-src', 'copy-vendor', 'copy-etc', 'hotfix-build', 'with-api-key', cb);
 });
 
 gulp.task('copy-public', function() {
@@ -80,6 +89,13 @@ gulp.task('hotfix-build', function() {
   remoteSrc(['loader.js'], {base: 'https://www.gstatic.com/charts/'})
     .pipe(gulp.dest('.tmp/public/bower_components/google-chart'));
   require('fs').writeFileSync('.tmp/public/bower_components/google-chart/charts-loader.html', '<script src="loader.js"></script>');
+});
+
+gulp.task('with-api-key', function() {
+  return gulp
+        .src(['.tmp/public/elements/te-form.html', '.tmp/public/elements/te-device-detail.html'], {base: '.'})
+        .pipe(replace('api-key=""', 'api-key="'+process.env.APIKEY+'"'))
+        .pipe(gulp.dest('.'));
 });
 
 // Watch files for changes & reload

@@ -11,7 +11,8 @@
     "start": "gulp serve",
     "postinstall": "bower install",
     "debug": "gulp debug",
-    "build": "gulp build"
+    "build": "gulp build",
+    "deploy": "gulp deploy"
   },
   "author": {
     "name": "Kenichiro Kishida",
@@ -25,6 +26,7 @@
     "gulp": "^3.9.1",
     "gulp-gae": "0.0.4",
     "gulp-remote-src": "^0.4.1",
+    "gulp-replace": "^0.5.4",
     "gulp-touch": "^1.0.1",
     "hydrolysis": "^1.24.1",
     "loop": "^2.1.2",

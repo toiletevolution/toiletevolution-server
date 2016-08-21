@@ -57,3 +57,4 @@ build
 ### Application setting file
 .tmp
 src/settings.php
+.envrc
