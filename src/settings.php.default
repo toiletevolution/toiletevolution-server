@@ -15,5 +15,9 @@ return [
             'hostedDomain' => 'http://localhost:8888',                      // PLEASE CHANGE DOMAIN
         ],
         
+        'storage' => [
+            'name' => 'toiletevolution.appspot.com'
+        ],
+        
     ],
 ];

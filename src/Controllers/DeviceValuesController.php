@@ -16,7 +16,8 @@ class DeviceValuesController
   public function get($request, $response, $args)
   {
     $id = $args['id'];
-    $fileName = "gs://toiletevolution/${id}.json";
+    $bucketName = $this->ci->get('settings')['storage']['name'];
+    $fileName = "gs://{$bucketName}/${id}.json";
 
     if(file_exists($fileName)) {
       $data = json_decode(file_get_contents($fileName), true);
@@ -40,7 +41,8 @@ class DeviceValuesController
   public function add($request, $response, $args)
   {
     $id = $args['id'];
-    $fileName = "gs://toiletevolution/${id}.json";
+    $bucketName = $this->ci->get('settings')['storage']['name'];
+    $fileName = "gs://{$bucketName}/${id}.json";
 
     if(file_exists($fileName)) {
       $data = json_decode(file_get_contents($fileName), true);

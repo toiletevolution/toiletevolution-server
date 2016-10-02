@@ -42,6 +42,11 @@ handlers:
     # Link: '</scripts/app.js>; rel=preload; as=script, </elements/elements.html>; rel=preload; as=document, </styles/main.css>; rel=preload; as=style'
     # Access-Control-Allow-Origin: "*"
 
+- url: /.well-known/acme-challenge/?(.{5}).*
+  static_files: public/letsencrypt/\1.txt
+  upload: public/letsencrypt/(.+)
+  mime_type: text/plain
+  
 automatic_scaling:
   min_idle_instances: automatic
   max_idle_instances: 1

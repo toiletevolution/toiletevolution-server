@@ -58,3 +58,4 @@ build
 .tmp
 src/settings.php
 .envrc
+public/letsencrypt
