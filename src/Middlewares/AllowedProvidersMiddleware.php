@@ -25,7 +25,7 @@ class AllowedProvidersMiddleware
   public function __invoke($request, $response, $next)
   {
     $route = $request->getAttribute('route');
-    $provider = $route->getArgument('provider');    
+    $provider = $route->getArgument('provider');
 
     if(!in_array($provider, $this->providers))
     {

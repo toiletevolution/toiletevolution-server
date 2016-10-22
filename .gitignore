@@ -59,3 +59,4 @@ build
 src/settings.php
 .envrc
 public/letsencrypt
+/.brackets.json

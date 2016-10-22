@@ -43,5 +43,15 @@
         "psr-4": {
           "ToiletEvolution\\": "src/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "helmich/phpunit-psr7-assert": "^1.1"
+    },
+    "autoload-dev": {
+        "files": [
+            "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php",
+            "vendor/helmich/phpunit-psr7-assert/src/Functions.php"
+        ]
     }
 }
