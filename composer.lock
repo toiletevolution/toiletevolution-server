@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f8f09d45fe2a833786405f55662241c6",
-    "content-hash": "ffc3249ae95595d09f4fc514383cacc8",
+    "hash": "22391e9ad47fe0dfcf7dd6ad09df2c91",
+    "content-hash": "e2f58cbdaafcdd55fb116b2076ed1740",
     "packages": [
         {
             "name": "akrabat/rka-slim-session-middleware",
@@ -1421,6 +1421,86 @@
             "time": "2016-09-06 17:43:18"
         },
         {
+            "name": "gecko-packages/gecko-memcache-mock",
+            "version": "v2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/GeckoPackages/GeckoMemcacheMock.git",
+                "reference": "ee641e22d02d6f7886ce4da7d4ca5dc95e17c23a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/GeckoPackages/GeckoMemcacheMock/zipball/ee641e22d02d6f7886ce4da7d4ca5dc95e17c23a",
+                "reference": "ee641e22d02d6f7886ce4da7d4ca5dc95e17c23a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.4 || ^7.0",
+                "psr/log": "~1.0",
+                "symfony/stopwatch": "~2.5|~3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GeckoPackages\\MemcacheMock\\": "src\\MemcacheMock"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Memcache mock.",
+            "homepage": "https://github.com/GeckoPackages",
+            "keywords": [
+                "memcache",
+                "memcached",
+                "mock",
+                "test"
+            ],
+            "time": "2016-09-18 06:44:42"
+        },
+        {
+            "name": "google/appengine-php-sdk",
+            "version": "1.9.30",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/GoogleCloudPlatform/appengine-php-sdk.git",
+                "reference": "6bdf4bcb638782526a6969aa36528ac583cbc3da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/GoogleCloudPlatform/appengine-php-sdk/zipball/6bdf4bcb638782526a6969aa36528ac583cbc3da",
+                "reference": "6bdf4bcb638782526a6969aa36528ac583cbc3da",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1",
+                "phpunit/phpunit": "4.6.*",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "google/appengine/runtime/autoloader.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Google App Engine PHP SDK",
+            "homepage": "https://cloud.google.com/appengine/docs/php/",
+            "keywords": [
+                "appengine",
+                "google",
+                "sdk"
+            ],
+            "time": "2015-12-08 07:29:30"
+        },
+        {
             "name": "helmich/phpunit-json-assert",
             "version": "v1.1.0",
             "source": {
@@ -2453,6 +2533,55 @@
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
             "time": "2015-06-21 13:59:46"
+        },
+        {
+            "name": "symfony/stopwatch",
+            "version": "v3.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/stopwatch.git",
+                "reference": "bb42806b12c5f89db4ebf64af6741afe6d8457e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/stopwatch/zipball/bb42806b12c5f89db4ebf64af6741afe6d8457e1",
+                "reference": "bb42806b12c5f89db4ebf64af6741afe6d8457e1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Stopwatch\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Stopwatch Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-06-29 05:41:56"
         },
         {
             "name": "symfony/yaml",

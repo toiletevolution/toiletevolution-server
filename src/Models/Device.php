@@ -89,8 +89,8 @@ class Device
 
   public function delete($device) {
     $this->memcache->deleteMulti([
-      "device:id:{$device->getKeyId()}", 
-      "device:all", 
+      "device:id:{$device->getKeyId()}",
+      "device:all",
       "device:all:created_by:{$device->created_by}",
     ]);
 
