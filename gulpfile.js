@@ -14,6 +14,9 @@ var tcpp = require('tcp-ping');
 var loop = require('loop')();
 var remoteSrc = require('gulp-remote-src');
 var replace = require('gulp-replace');
+var phpunit = require('gulp-phpunit');
+var waitOn = require('wait-on');
+var exit = require('gulp-exit');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -53,7 +56,7 @@ gulp.task('deploy', ['build'], function () {
   gulp.src('.tmp/build/bundled/app.yaml')
     .pipe(gae('appcfg.py', ['update'], {
       version: 'v1',
-      oauth2: undefined // for value-less parameters 
+      oauth2: undefined // for value-less parameters
     }));
 });
 
@@ -102,7 +105,7 @@ gulp.task('with-api-key', function() {
 gulp.task('serve', ['gae-serve'], function() {
 
 
-  loop.run(function (next, err) {
+  loop.run(function (next) {
     tcpp.probe('127.0.0.1', 8888, function(err, available) {
 
       if(available) {
@@ -134,7 +137,7 @@ gulp.task('serve', ['gae-serve'], function() {
         next(undefined);
 
       }
-    })
+    });
   }, 0);
 
 
@@ -148,12 +151,12 @@ gulp.task('gae-serve', function () {
       host: '0.0.0.0',
       admin_port: 8001,
       admin_host: '0.0.0.0'
-    }))
+    }));
 
   gulp.watch(['app.yml', 'public/**/*.html', 'public/styles/**/*.css', 'public/elements/**/*.css', 'public/images/**/*'], ['build']);
 });
 
-gulp.task('debug', function () {
+gulp.task('debug', function (done) {
   gulp
     .src('app.yml')
     .pipe(gae('dev_appserver.py', [], {
@@ -161,7 +164,26 @@ gulp.task('debug', function () {
       host: '0.0.0.0',
       admin_port: 8001,
       admin_host: '0.0.0.0'
-    }))
+    }));
+  waitOn({
+    resources: ['http://localhost:8888']
+  }, function() {
+    done();
+  });
+});
+
+gulp.task('phpunit', function() {
+  var options = {debug: false};
+  return gulp.src('')
+    .pipe(phpunit('./vendor/bin/phpunit',options))
+    .pipe(exit());
+});
+
+gulp.task('test', function(cb) {
+  runSequence(
+    'debug',
+    'phpunit',
+    cb);
 });
 
 // Build production files, the default task
@@ -175,7 +197,7 @@ gulp.task('default', ['clean'], function(cb) {
 
 // Load tasks for web-component-tester
 // Adds tasks for `gulp test:local` and `gulp test:remote`
-require('web-component-tester').gulp.init(gulp);
+//require('web-component-tester').gulp.init(gulp);
 
 // Load custom tasks from the `tasks` directory
 try {

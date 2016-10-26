@@ -13,6 +13,8 @@ skip_files:
 - bower.json
 - package.json
 - polymer.json
+  tests
+  .git
 
 handlers:
 - url: /favicon\.ico
@@ -46,7 +48,7 @@ handlers:
   static_files: public/letsencrypt/\1.txt
   upload: public/letsencrypt/(.+)
   mime_type: text/plain
-  
+
 automatic_scaling:
   min_idle_instances: automatic
   max_idle_instances: 1

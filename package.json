@@ -7,7 +7,7 @@
     "node": ">= 4.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "gulp test",
     "start": "gulp serve",
     "postinstall": "bower install",
     "debug": "gulp debug",
@@ -35,6 +35,9 @@
     "tcp-ping": "^0.1.1"
   },
   "devDependencies": {
+    "gulp-exit": "0.0.2",
+    "gulp-phpunit": "^0.21.4",
+    "wait-on": "^1.5.3",
     "web-component-tester": "^4.2.2"
   }
 }
