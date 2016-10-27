@@ -198,8 +198,9 @@ gulp.task('test', ['copy-php.ini'], function(done) {
     }, function(res) {
       res.on("data", function(chunk) {
         console.log(chunk.toString());
+      });
+      res.on('end', function() {
         done();
-        process.exit(0);
       });
     });
   });
