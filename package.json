@@ -36,7 +36,8 @@
   },
   "devDependencies": {
     "gulp-exit": "0.0.2",
-    "gulp-phpunit": "^0.21.4",
+    "gulp-insert": "^0.5.0",
+    "junit-viewer": "^4.11.0",
     "wait-on": "^1.5.3",
     "web-component-tester": "^4.2.2"
   }

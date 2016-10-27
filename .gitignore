@@ -60,3 +60,5 @@ src/settings.php
 .envrc
 public/letsencrypt
 /.brackets.json
+tests/test-results.xml
+tests/php.ini

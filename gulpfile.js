@@ -14,8 +14,9 @@ var tcpp = require('tcp-ping');
 var loop = require('loop')();
 var remoteSrc = require('gulp-remote-src');
 var replace = require('gulp-replace');
-var phpunit = require('gulp-phpunit');
 var waitOn = require('wait-on');
+var insert = require('gulp-insert');
+var http = require('http');
 var exit = require('gulp-exit');
 
 var AUTOPREFIXER_BROWSERS = [
@@ -172,18 +173,36 @@ gulp.task('debug', function (done) {
   });
 });
 
-gulp.task('phpunit', function() {
-  var options = {debug: false};
-  return gulp.src('')
-    .pipe(phpunit('./vendor/bin/phpunit',options))
-    .pipe(exit());
+gulp.task('copy-php.ini', function() {
+  return gulp.src('php.ini')
+    .pipe(insert.append('google_app_engine.disable_readonly_filesystem = 1'))
+    .pipe(gulp.dest('./tests'));
 });
 
-gulp.task('test', function(cb) {
-  runSequence(
-    'debug',
-    'phpunit',
-    cb);
+gulp.task('test', ['copy-php.ini'], function(done) {
+  gulp
+    .src('tests/app.yml')
+    .pipe(gae('dev_appserver.py', ['--dev_appserver_log_level=error'], {
+      port: 8888,
+      host: '0.0.0.0',
+      admin_port: 8001,
+      admin_host: '0.0.0.0'
+    }));
+  waitOn({
+    resources: ['http://localhost:8888']
+  }, function() {
+    http.get({
+      hostname: 'localhost',
+      port: 8888,
+      path: '/phpunit'
+    }, function(res) {
+      res.on("data", function(chunk) {
+        console.log(chunk.toString());
+        done();
+        process.exit(0);
+      });
+    });
+  });
 });
 
 // Build production files, the default task
