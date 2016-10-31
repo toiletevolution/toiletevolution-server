@@ -18,6 +18,7 @@ var waitOn = require('wait-on');
 var insert = require('gulp-insert');
 var http = require('http');
 var exit = require('gulp-exit');
+var decode = require('decode-html');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -197,7 +198,7 @@ gulp.task('test', ['copy-php.ini'], function(done) {
       path: '/phpunit'
     }, function(res) {
       res.on("data", function(chunk) {
-        console.log(chunk.toString());
+        console.log(decode(chunk.toString()));
       });
       res.on('end', function() {
         done();

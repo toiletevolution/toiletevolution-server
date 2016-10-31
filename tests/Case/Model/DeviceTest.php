@@ -187,4 +187,31 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
     assertFalse($this->cache->get("device:all:created_by:{$this->user->getKeyId()}"));
   }
 
+  /**
+   * @dataProvider deviceData
+   */
+  public function testValidate($json, $valid, $message)
+  {
+    $json = json_decode($json);
+    assertEquals($valid, $this->target->validate($json), $message);
+  }
+
+  public function deviceData()
+  {
+    return [
+      ['', false, 'Empty is invalid'],
+      ['{"name": "hoge", "password": "pass", "thresholds": [{"value": "1", "condition": "eq"}], "location": {"latitude": 123.45, "longitude": 345.678}}', true, 'Valid Data'],
+      ['{"password": "pass", "thresholds": [{"value": "1", "condition": "eq"}], "location": {"latitude": 123.45, "longitude": 345.678}}', false, 'Name is required'],
+      ['{"name": "hoge", "thresholds": [{"value": "1", "condition": "eq"}], "location": {"latitude": 123.45, "longitude": 345.678}}', false, 'Password is required'],
+      ['{"name": "hoge", "password": "pass", "location": {"latitude": 123.45, "longitude": 345.678}}', false, 'Thresholds is required'],
+// TODO: Json Schema library couldn't valid object in array
+//      ['{"name": "hoge", "password": "pass", "thresholds": [{"condition": "eq"}], "location": {"latitude": 123.45, "longitude": 345.678}}', false, 'Thresholds value is required'],
+//      ['{"name": "hoge", "password": "pass", "thresholds": [{"value": "1"}], "location": {"latitude": 123.45, "longitude": 345.678}}', false, 'Thresholds condition is required'],
+//      ['{"name": "hoge", "password": "pass", "thresholds": [{"value": "1", "condition": "equal"}], "location": {"latitude": 123.45, "longitude": 345.678}}', false, 'Thresholds condition is only gt,eq,lt'],
+      ['{"name": "hoge", "password": "pass", "thresholds": [{"value": "1", "condition": "eq"}]}', false, 'location is required'],
+      ['{"name": "hoge", "password": "pass", "thresholds": [{"value": "1", "condition": "eq"}], "location": {"longitude": 345.678}}', false, 'location latitude is required'],
+      ['{"name": "hoge", "password": "pass", "thresholds": [{"value": "1", "condition": "eq"}], "location": {"latitude": 123.45}}', false, 'location longitude is required'],
+      ['{"name": "hoge", "password": "pass", "thresholds": [{"value": 1, "condition": "eq"}], "location": {"latitude": 123.45, "longitude": 345.678}}', false, 'thresholds value should string'],
+    ];
+  }
 }
