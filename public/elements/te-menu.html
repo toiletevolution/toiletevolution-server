@@ -43,7 +43,7 @@
     <paper-menu attr-for-item-title="label" class="horizontal-section">
       <paper-submenu label="toilets">
         <paper-icon-item class="menu-trigger"><iron-icon icon="notification:wc" item-icon></iron-icon>トイレの空き状況</paper-icon-item>
-        <paper-menu class="menu-content" selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+        <paper-menu class="menu-content drawer-list" selected="[[page]]" attr-for-selected="name" role="navigation">
           <a href="#/devices" name="devices"><paper-item name="devices">トイレ一覧</paper-item></a>
           <a href="#/bookmark" name="bookmark"><paper-item>お気に入り</paper-item></a>
           <a href="#/about" name="about"><paper-item>Toilet Evolutionについて</paper-item></a>
@@ -51,7 +51,7 @@
       </paper-submenu>
       <paper-submenu label="settings">
         <paper-icon-item class="menu-trigger"><iron-icon icon="icons:settings" item-icon></iron-icon>デバイス管理</paper-icon-item>
-        <paper-menu class="menu-content" selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+        <paper-menu class="menu-content drawer-list" selected="[[page]]" attr-for-selected="name" role="navigation">
           <a href="#/admin/devices" name="admin"><paper-item>登録済みトイレ一覧</paper-item></a>
           <template is="dom-if" if="{{notExists(user)}}">
             <a href="#/login" name="login"><paper-item>ログイン</paper-item></a>
