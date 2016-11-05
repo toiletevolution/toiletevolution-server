@@ -98,12 +98,8 @@
       },
 
       _pageChanged: function(page) {
-        // load page import on demand.
-        var url = new URL(this.resolveUrl('te-' + page + '.html'));
-        if(!url.pathname.startsWith('/elements/')) {
-          url.pathname = '/elements' + url.pathname;
-        }
-        this.importHref(url.toString(), null, null, true);
+        this.importHref('/elements/te-' + page + '.html', null, null, true);
+
         var submenu = ({devices: 'toilets', bookmark: 'toilets', about: 'toilets', admin: 'settings', login: 'settings'})[page];
         this.$$('paper-submenu[label='+submenu+']').open();
         this.selectedTitle = ({devices: 'トイレの空き状況', bookmark: 'お気に入り', about: 'Toilet Evolutionについて', admin: 'デバイス管理', login: 'ログイン'})[page];

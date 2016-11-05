@@ -47,6 +47,7 @@ gulp.task('clean', function() {
 gulp.task('build', ['copy-tmp'], function (cb) {
   process.chdir('.tmp');
   exec('polymer build', function (err, stdout, stderr) {
+    process.chdir('..');
     console.log(stdout);
     console.log(stderr);
     cb(err);
@@ -147,7 +148,7 @@ gulp.task('serve', ['gae-serve'], function() {
 
 gulp.task('gae-serve', function () {
   gulp
-    .src('build/bundled/app.yml')
+    .src('.tmp/build/bundled/app.yml')
     .pipe(gae('dev_appserver.py', [], {
       port: 8888,
       host: '0.0.0.0',
@@ -219,8 +220,3 @@ gulp.task('default', ['clean'], function(cb) {
 // Load tasks for web-component-tester
 // Adds tasks for `gulp test:local` and `gulp test:remote`
 //require('web-component-tester').gulp.init(gulp);
-
-// Load custom tasks from the `tasks` directory
-try {
-  require('require-dir')('tasks');
-} catch (err) {}

@@ -30,7 +30,7 @@
     "gulp-touch": "^1.0.1",
     "hydrolysis": "^1.24.1",
     "loop": "^2.1.2",
-    "polymer-cli": "^0.12.0",
+    "polymer-cli": "^0.17.0",
     "run-sequence": "^1.2.1",
     "tcp-ping": "^0.1.1"
   },
