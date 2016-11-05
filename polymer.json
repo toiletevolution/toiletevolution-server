@@ -4,6 +4,22 @@
   "fragments": [
     "public/elements/te-devices.html",
     "public/elements/te-admin.html",
-    "public/elements/te-login.html"
+    "public/elements/te-login.html",
+    "public/elements/te-about.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "vendor/**/*",
+    "public/images/**/*",
+    "public/scripts/**/*",
+    "public/styles/**/*",
+    "public/index.php",
+    "public/manifest.json",
+    "public/*.js",
+    "app.yml",
+    "php.ini"
+  ],
+  "includeDependencies": [
+    "public/bower_components/webcomponentsjs/webcomponents-lite.js"
   ]
 }
