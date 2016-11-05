@@ -9,7 +9,7 @@
   "scripts": {
     "test": "gulp test",
     "start": "gulp serve",
-    "postinstall": "bower install",
+    "postinstall": "gulp install",
     "debug": "gulp debug",
     "build": "gulp build",
     "deploy": "gulp deploy"
@@ -36,6 +36,8 @@
   },
   "devDependencies": {
     "decode-html": "^1.0.2",
+    "gulp-bower": "0.0.13",
+    "gulp-composer": "^0.4.0",
     "gulp-exit": "0.0.2",
     "gulp-insert": "^0.5.0",
     "junit-viewer": "^4.11.0",

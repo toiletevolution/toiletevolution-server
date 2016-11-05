@@ -19,6 +19,8 @@ var insert = require('gulp-insert');
 var http = require('http');
 var exit = require('gulp-exit');
 var decode = require('decode-html');
+var bower = require('gulp-bower');
+var composer = require('gulp-composer');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -37,6 +39,12 @@ var DIST = 'build';
 var dist = function(subpath) {
   return !subpath ? DIST : path.join(DIST, subpath);
 };
+
+// Install dependencies
+gulp.task('install', function() {
+  bower();
+  composer();
+});
 
 // Clean output directory
 gulp.task('clean', function() {
