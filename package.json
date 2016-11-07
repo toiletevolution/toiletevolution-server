@@ -12,7 +12,8 @@
     "postinstall": "gulp install",
     "debug": "gulp debug",
     "build": "gulp build",
-    "deploy": "gulp deploy"
+    "deploy": "gulp deploy",
+    "docs": "gulp docs"
   },
   "author": {
     "name": "Kenichiro Kishida",

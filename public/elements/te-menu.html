@@ -31,6 +31,12 @@
 
         @apply(--paper-item-selected);
       }
+      a iron-icon[icon="icons:open-in-new"] {
+        --iron-icon-stroke-color: lightgray;
+        --iron-icon-width: 18px;
+        --iron-icon-height: 18px;
+        margin-left: 0.5em;
+      }
     </style>
 
     <excess-route route="/:page/(.*)?" page="{{page}}"></excess-route>
@@ -45,7 +51,6 @@
         <paper-icon-item class="menu-trigger"><iron-icon icon="notification:wc" item-icon></iron-icon>トイレの空き状況</paper-icon-item>
         <paper-menu class="menu-content drawer-list" selected="[[page]]" attr-for-selected="name" role="navigation">
           <a href="#/devices" name="devices"><paper-item name="devices">トイレ一覧</paper-item></a>
-          <a href="#/bookmark" name="bookmark"><paper-item>お気に入り</paper-item></a>
           <a href="#/about" name="about"><paper-item>Toilet Evolutionについて</paper-item></a>
         </paper-menu>
       </paper-submenu>
@@ -58,6 +63,9 @@
           </template>
         </paper-menu>
       </paper-submenu>
+      <paper-menu class="menu-content">
+        <a href="/docs/devices.html" target="_blank"><paper-icon-item><iron-icon icon="icons:description" item-icon></iron-icon><paper-item-body>APIドキュメント</paper-item-body><iron-icon icon="icons:open-in-new"></iron-icon></paper-icon-item></a>
+      </paper-menu>
       <template is="dom-if" if="{{!notExists(user)}}">
         <paper-icon-item><iron-icon src="{{user.avatar}}" item-icon></iron-icon>{{user.name}}</paper-icon-item>
       </template>
