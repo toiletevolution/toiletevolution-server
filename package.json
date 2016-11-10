@@ -12,7 +12,8 @@
     "postinstall": "gulp install",
     "debug": "gulp debug",
     "build": "gulp build",
-    "deploy": "gulp deploy"
+    "deploy": "gulp deploy",
+    "docs": "gulp docs"
   },
   "author": {
     "name": "Kenichiro Kishida",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "decode-html": "^1.0.2",
+    "gulp-aglio": "0.0.10",
     "gulp-bower": "0.0.13",
     "gulp-composer": "^0.4.0",
     "gulp-exit": "0.0.2",

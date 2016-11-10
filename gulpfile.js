@@ -21,6 +21,7 @@ var exit = require('gulp-exit');
 var decode = require('decode-html');
 var bower = require('gulp-bower');
 var composer = require('gulp-composer');
+var aglio = require('gulp-aglio');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -214,6 +215,12 @@ gulp.task('test', ['copy-php.ini'], function(done) {
       });
     });
   });
+});
+
+gulp.task('docs', function () {
+  gulp.src('docs/*.md')
+    .pipe(aglio({ template: 'default' }))
+    .pipe(gulp.dest('./public/docs'));
 });
 
 // Build production files, the default task
