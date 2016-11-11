@@ -31,7 +31,7 @@
     "paper-listbox": "polymerelements/paper-listbox#^1.1.2",
     "iron-icons": "PolymerElements/iron-icons#^1.1.3",
     "excess-router": "^0.9.14",
-    "paper-tabs": "PolymerElements/paper-tabs#^1.6.2",
+    "paper-tabs": "PolymerElements/paper-tabs#^1.7.0",
     "moment": "^2.13.0",
     "paper-card": "PolymerElements/paper-card#^1.1.1",
     "paper-fab": "PolymerElements/paper-fab#^1.2.0",

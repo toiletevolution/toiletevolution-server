@@ -51,7 +51,6 @@
         <paper-icon-item class="menu-trigger"><iron-icon icon="notification:wc" item-icon></iron-icon>トイレの空き状況</paper-icon-item>
         <paper-menu class="menu-content drawer-list" selected="[[page]]" attr-for-selected="name" role="navigation">
           <a href="#/devices" name="devices"><paper-item name="devices">トイレ一覧</paper-item></a>
-          <a href="#/about" name="about"><paper-item>Toilet Evolutionについて</paper-item></a>
         </paper-menu>
       </paper-submenu>
       <paper-submenu label="settings">
@@ -63,9 +62,14 @@
           </template>
         </paper-menu>
       </paper-submenu>
-      <paper-menu class="menu-content">
-        <a href="/docs/devices.html" target="_blank"><paper-icon-item><iron-icon icon="icons:description" item-icon></iron-icon><paper-item-body>APIドキュメント</paper-item-body><iron-icon icon="icons:open-in-new"></iron-icon></paper-icon-item></a>
-      </paper-menu>
+      <paper-submenu label="documents">
+        <paper-icon-item class="menu-trigger"><iron-icon icon="icons:description" item-icon></iron-icon>ドキュメント</paper-icon-item>
+        <paper-menu class="menu-content">
+          <a href="#/about" name="about"><paper-item>Toilet Evolutionについて</paper-item></a>
+          <a href="#/usage" name="usage"><paper-item>利用方法</paper-item></a>
+          <a href="/docs/devices.html" target="_blank"><paper-item><paper-item-body>APIドキュメント</paper-item-body><iron-icon icon="icons:open-in-new"></iron-icon></paper-item></a>
+        </paper-menu>
+      </paper-submenu>
       <template is="dom-if" if="{{!notExists(user)}}">
         <paper-icon-item><iron-icon src="{{user.avatar}}" item-icon></iron-icon>{{user.name}}</paper-icon-item>
       </template>
@@ -108,9 +112,9 @@
       _pageChanged: function(page) {
         this.importHref('/elements/te-' + page + '.html', null, null, true);
 
-        var submenu = ({devices: 'toilets', bookmark: 'toilets', about: 'toilets', admin: 'settings', login: 'settings'})[page];
+        var submenu = ({devices: 'toilets', bookmark: 'toilets', about: 'documents', admin: 'settings', login: 'settings', usage: 'documents'})[page];
         this.$$('paper-submenu[label='+submenu+']').open();
-        this.selectedTitle = ({devices: 'トイレの空き状況', bookmark: 'お気に入り', about: 'Toilet Evolutionについて', admin: 'デバイス管理', login: 'ログイン'})[page];
+        this.selectedTitle = ({devices: 'トイレの空き状況', bookmark: 'お気に入り', about: 'Toilet Evolutionについて', admin: 'デバイス管理', login: 'ログイン', usage: '利用方法'})[page];
       },
       notExists: function(user) {
         return !user;

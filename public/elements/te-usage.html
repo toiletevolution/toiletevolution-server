@@ -1,0 +1,55 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-shared-styles.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+
+<dom-module id="te-usage">
+
+  <template>
+    <style include="paper-item-shared-styles"></style>
+    <style>
+      :host {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        height: 100%;
+      }
+      paper-tabs {
+        --paper-tabs-selection-bar-color: transparent;
+      }
+      paper-tab {
+        --paper-tab-ink: transparent;
+      }
+      paper-tab.iron-selected {
+        background-color: var(--light-primary-color);
+        font-weight: bold;
+      }
+      iron-pages {
+        margin: 15px;
+      }
+    </style>
+
+    <paper-tabs selected="{{selected}}" autoselect>
+      <paper-tab>空き状況を見る</paper-tab>
+      <paper-tab>デバイスを設置する</paper-tab>
+    </paper-tabs>
+
+    <iron-pages selected="[[selected]]">
+      <article>トイレの空き状況を見たい</article>
+      <article>デバイスを設置してトイレの空き状況を見える化したい</article>
+    </iron-pages>
+
+  </template>
+  <script>
+
+    Polymer({
+      is: 'te-usage',
+      properties: {
+        selected: {
+          value: 0
+        }
+      }
+    });
+
+  </script>
+</dom-module>
