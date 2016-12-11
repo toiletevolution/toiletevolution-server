@@ -14,12 +14,13 @@ $app->get('/api/user/current', '\ToiletEvolution\Controllers\UsersController:cur
 //
 $app->post('/api/devices/{id}/values', '\ToiletEvolution\Controllers\DeviceValuesController:add')
     ->add(new \Slim\Middleware\HttpBasicAuthentication([
-      "authenticator" => new ToiletEvolution\Middlewares\HttpBasicAuthentication\DeviceAuthenticator($app->getContainer()->get('DeviceStore')),
+        "authenticator" => new ToiletEvolution\Middlewares\HttpBasicAuthentication\DeviceAuthenticator($app->getContainer()->get('DeviceStore')),
         "callback" => function($request, $response, $arguments) {
           $route = $request->getAttribute('route');
           $id = $route->getArgument('id');
           return $id === $arguments['user'];
-        }
+        },
+        "secure" => false
       ]));
 
 //
