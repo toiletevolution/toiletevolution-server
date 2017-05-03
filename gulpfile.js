@@ -35,7 +35,7 @@ var AUTOPREFIXER_BROWSERS = [
   'bb >= 10'
 ];
 
-var DIST = 'build';
+var DIST = '.tmp';
 
 var dist = function(subpath) {
   return !subpath ? DIST : path.join(DIST, subpath);
@@ -49,55 +49,43 @@ gulp.task('install', function() {
 
 // Clean output directory
 gulp.task('clean', function() {
-  return del(['.tmp', dist()]);
-});
-
-// Build polymer app
-gulp.task('build', ['copy-tmp'], function (cb) {
-  process.chdir('.tmp');
-  exec('polymer build', function (err, stdout, stderr) {
-    process.chdir('..');
-    console.log(stdout);
-    console.log(stderr);
-    cb(err);
-    reload();
-  });
+  return del([dist()]);
 });
 
 gulp.task('deploy', ['build'], function () {
-  gulp.src('.tmp/build/bundled/app.yaml')
+  gulp.src(dist('app.yaml'))
     .pipe(gae('appcfg.py', ['update'], {
       version: 'v1',
       oauth2: undefined // for value-less parameters
     }));
 });
 
-gulp.task('copy-tmp', function(cb) {
+gulp.task('build', function(cb) {
   runSequence('copy-public', 'copy-src', 'copy-vendor', 'copy-etc', 'hotfix-build', 'with-api-key', cb);
 });
 
 gulp.task('copy-public', function() {
   return gulp
     .src(['./public/**/*'], {base: '.'})
-    .pipe(gulp.dest('.tmp'));
+    .pipe(gulp.dest(dist()));
 });
 
 gulp.task('copy-src', function() {
   return gulp
     .src(['./src/**/*'], {base: '.'})
-    .pipe(gulp.dest('.tmp'));
+    .pipe(gulp.dest(dist()));
 });
 
 gulp.task('copy-vendor', function() {
   return gulp
     .src(['./vendor/**/*'], {base: '.'})
-    .pipe(gulp.dest('.tmp'));
+    .pipe(gulp.dest(dist()));
 });
 
 gulp.task('copy-etc', function() {
   return gulp
     .src(['app.yml', 'php.ini', 'polymer.json'])
-    .pipe(gulp.dest('.tmp'));
+    .pipe(gulp.dest(dist()));
 });
 
 gulp.task('hotfix-build', function() {
@@ -157,7 +145,7 @@ gulp.task('serve', ['gae-serve'], function() {
 
 gulp.task('gae-serve', function () {
   gulp
-    .src('.tmp/build/bundled/app.yml')
+    .src(dist('app.yml'))
     .pipe(gae('dev_appserver.py', [], {
       port: 8888,
       host: '0.0.0.0',
