@@ -4,10 +4,10 @@
 //
 // For Public
 //
-$app->get('/api/devices', '\ToiletEvolution\Controllers\DevicesController:index');
-$app->get('/api/devices/{id}', '\ToiletEvolution\Controllers\DevicesController:get');
-$app->get('/api/devices/{id}/values', '\ToiletEvolution\Controllers\DeviceValuesController:get');
-$app->get('/api/user/current', '\ToiletEvolution\Controllers\UsersController:current');
+$app->get('/api/devices', '\ToiletEvolution\Controllers\DevicesController:index')->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
+$app->get('/api/devices/{id}', '\ToiletEvolution\Controllers\DevicesController:get')->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
+$app->get('/api/devices/{id}/values', '\ToiletEvolution\Controllers\DeviceValuesController:get')->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
+$app->get('/api/user/current', '\ToiletEvolution\Controllers\UsersController:current')->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
 
 //
 // For Registered Devices
