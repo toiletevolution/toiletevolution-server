@@ -7,10 +7,12 @@ use Carbon\Carbon;
 class DeviceValuesController
 {
   protected $ci;
+  private $memcache;
 
   public function __construct(ContainerInterface $ci)
   {
     $this->ci = $ci;
+    $this->memcache = $this->ci->get(\Memcached::class);
   }
 
   public function get($request, $response, $args)
@@ -19,10 +21,15 @@ class DeviceValuesController
     $bucketName = $this->ci->get('settings')['storage']['name'];
     $fileName = "gs://{$bucketName}/${id}.json";
 
-    if(file_exists($fileName)) {
-      $data = json_decode(file_get_contents($fileName), true);
+    $cache = $this->memcache->get($fileName);
+    if ($cache === false) {
+      if(file_exists($fileName)) {
+        $data = json_decode(file_get_contents($fileName), true);
+      } else {
+        $data = [];
+      }
     } else {
-      $data = [];
+      $data = $cache['data'];
     }
 
     $expired = Carbon::now();
@@ -43,11 +50,18 @@ class DeviceValuesController
     $id = $args['id'];
     $bucketName = $this->ci->get('settings')['storage']['name'];
     $fileName = "gs://{$bucketName}/${id}.json";
+    $cacheCount = 0;
 
-    if(file_exists($fileName)) {
-      $data = json_decode(file_get_contents($fileName), true);
+    $cache = $this->memcache->get($fileName);
+    if ($cache === false) {
+      if(file_exists($fileName)) {
+        $data = json_decode(file_get_contents($fileName), true);
+      } else {
+        $data = [];
+      }
     } else {
-      $data = [];
+      $data = $cache['data'];
+      $cacheCount = $cache['count'];
     }
 
     $expired = Carbon::now();
@@ -64,7 +78,11 @@ class DeviceValuesController
 
     $filtered[] = ['payload' => $payload, 'created' => Carbon::now()->toAtomString()];
 
-    file_put_contents($fileName, json_encode($filtered));
+    if ($cacheCount === 0) {
+      file_put_contents($fileName, json_encode($filtered));
+      $cacheCount = 10;
+    }
+    $this->memcache->set($fileName, ['data' => $filtered, 'count' => ($cacheCount - 1)]);
 
     return $response->withStatus(201);
   }
