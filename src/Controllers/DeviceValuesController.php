@@ -80,7 +80,7 @@ class DeviceValuesController
 
     if ($cacheCount === 0) {
       file_put_contents($fileName, json_encode($filtered));
-      $cacheCount = 10;
+      $cacheCount = 30;
     }
     $this->memcache->set($fileName, ['data' => $filtered, 'count' => ($cacheCount - 1)]);
 
