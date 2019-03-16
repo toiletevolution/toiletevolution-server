@@ -5,7 +5,6 @@ var gulp = require('gulp');
 var gae = require('gulp-gae');
 
 var del = require('del');
-var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var path = require('path');
@@ -19,7 +18,6 @@ var insert = require('gulp-insert');
 var http = require('http');
 var exit = require('gulp-exit');
 var decode = require('decode-html');
-var bower = require('gulp-bower');
 var composer = require('gulp-composer');
 var aglio = require('gulp-aglio');
 
@@ -45,29 +43,13 @@ gulp.task('composer', function() {
   return composer();
 });
 
-gulp.task('bower', function() {
-  return bower();
-});
-
 // Install dependencies
-gulp.task('install', gulp.series('composer', 'bower'));
+gulp.task('install', gulp.series('composer'));
 
 // Clean output directory
 gulp.task('clean', function() {
   return del([dist()]);
 });
-
-gulp.task('build', function(cb) {
-  runSequence('copy-public', 'copy-src', 'copy-vendor', 'copy-etc', 'hotfix-build', 'with-api-key', cb);
-});
-
-gulp.task('deploy', gulp.series('build', function () {
-  gulp.src(dist('app.yaml'))
-    .pipe(gae('appcfg.py', ['update'], {
-      version: 'v1',
-      oauth2: undefined // for value-less parameters
-    }));
-}));
 
 gulp.task('copy-public', function() {
   return gulp
@@ -93,18 +75,34 @@ gulp.task('copy-etc', function() {
     .pipe(gulp.dest(dist()));
 });
 
-gulp.task('hotfix-build', function() {
-  remoteSrc(['loader.js'], {base: 'https://www.gstatic.com/charts/'})
+gulp.task('remote-src', function() {
+  return remoteSrc(['loader.js'], {base: 'https://www.gstatic.com/charts/'})
     .pipe(gulp.dest('.tmp/public/bower_components/google-chart'));
-  require('fs').writeFileSync('.tmp/public/bower_components/google-chart/charts-loader.html', '<script src="loader.js"></script>');
 });
+
+gulp.task('hotfix-build', gulp.series('remote-src', function(done) {
+  require('fs').writeFileSync('.tmp/public/bower_components/google-chart/charts-loader.js', '<script src="loader.js"></script>');
+  done();
+}));
 
 gulp.task('with-api-key', function() {
   return gulp
-        .src(['.tmp/public/elements/te-form.html', '.tmp/public/elements/te-device-detail.html'], {base: '.'})
+        .src(['.tmp/public/elements/te-form.js', '.tmp/public/elements/te-device-detail.js'], {base: '.'})
         .pipe(replace('api-key=""', 'api-key="'+process.env.APIKEY+'"'))
         .pipe(gulp.dest('.'));
 });
+
+gulp.task('build', gulp.series('copy-public', 'copy-src', 'copy-vendor', 'copy-etc', 'hotfix-build', 'with-api-key', function(done) {
+  done();
+}));
+
+gulp.task('deploy', gulp.series('build', function () {
+  gulp.src(dist('app.yaml'))
+    .pipe(gae('appcfg.py', ['update'], {
+      version: 'v1',
+      oauth2: undefined // for value-less parameters
+    }));
+}));
 
 gulp.task('gae-serve', function () {
   gulp
@@ -116,7 +114,7 @@ gulp.task('gae-serve', function () {
       admin_host: '0.0.0.0'
     }));
 
-  gulp.watch(['app.yml', 'public/**/*.html', 'public/styles/**/*.css', 'public/elements/**/*.css', 'public/images/**/*'], ['build']);
+  gulp.watch(['app.yml', 'public/**/*.html', 'public/**/*.js', 'public/styles/**/*.css', 'public/elements/**/*.css', 'public/images/**/*'], gulp.task('build'));
 });
 
 // Watch files for changes & reload
@@ -217,12 +215,8 @@ gulp.task('docs', function () {
 });
 
 // Build production files, the default task
-gulp.task('default', gulp.series('clean', function(cb) {
-  // Uncomment 'cache-config' if you are going to use service workers.
-  runSequence(
-    'build',
-    'serve',
-    cb);
+gulp.task('default', gulp.series('clean', 'build', 'serve', function(done) {
+  done();
 }));
 
 // Load tasks for web-component-tester

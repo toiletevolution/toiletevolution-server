@@ -1,9 +1,7 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+import '../bower_components/polymer/polymer-legacy.js';
 
-<dom-module id="te-login">
-
-  <template>
-
+Polymer({
+  _template: Polymer.html`
     <style>
       :host {
         display: block;
@@ -19,17 +17,7 @@
     <h2>Toilet Evolution</h2>
     <a href="/auth/google/" rel="external"><img src="../images/btn_google+_signin_dark_normal_web@2x.png"></a>
     <p>デバイス管理にはログインが必要です</p>
+`,
 
-  </template>
-
-  <script>
-
-    Polymer({
-
-      is: 'te-login'
-
-    });
-
-  </script>
-
-</dom-module>
+  is: 'te-login'
+});

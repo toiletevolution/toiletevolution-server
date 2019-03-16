@@ -1,12 +1,10 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../bower_components/app-layout/app-box/app-box.html">
+import '../bower_components/polymer/polymer-legacy.js';
+import '../bower_components/app-layout/app-scroll-effects/app-scroll-effects.js';
+import '../bower_components/app-layout/app-box/app-box.js';
+import './te-fade-background.js';
 
-<link rel="import" href="te-fade-background.html">
-
-<dom-module id="te-about">
-
-  <template>
+Polymer({
+  _template: Polymer.html`
     <style>
       :host {
         margin: 0;
@@ -119,17 +117,17 @@
             <p><img src="/images/logo.png" class="logo"></p>
           </article>
           <!--
-  app-box allows to style the mixin `--app-box-background-front-layer` or create a custom background in the light DOM.
-  In this case, we create a custom background by adding the attribute `background` to the `img` in
+  app-box allows to style the mixin \`--app-box-background-front-layer\` or create a custom background in the light DOM.
+  In this case, we create a custom background by adding the attribute \`background\` to the \`img\` in
   the light DOM.
   -->
-          <img background src="/images/wc-265279_1920.jpg" style="width:100%; height: 800px" />
+          <img background="" src="/images/wc-265279_1920.jpg" style="width:100%; height: 800px">
         </app-box>
       </section>
 
       <section>
         <!--
-  This app-box uses the class `.second` and the mixin `--app-box-background-front-layer` to assign the background image.
+  This app-box uses the class \`.second\` and the mixin \`--app-box-background-front-layer\` to assign the background image.
   -->
         <app-box class="problem" scroll-target="scrollingRegion" effects="parallax-background te-fade-background">
           <article>
@@ -187,12 +185,7 @@
       </section>
 
     </div>
-  </template>
-  <script>
+`,
 
-    Polymer({
-      is: 'te-about'
-    });
-
-  </script>
-</dom-module>
+  is: 'te-about'
+});
