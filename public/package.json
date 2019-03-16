@@ -1,0 +1,51 @@
+{
+  "name": "toiletevolution",
+  "version": "1.0.0",
+  "description": "Toilet Evolution Frontend Application",
+  "main": "index.js",
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "scripts": {
+    "test": "gulp test",
+    "start": "gulp serve",
+    "postinstall": "gulp install",
+    "debug": "gulp debug",
+    "build": "gulp build",
+    "deploy": "gulp deploy",
+    "docs": "gulp docs",
+    "polymer": "polymer"
+  },
+  "author": {
+    "name": "Kenichiro Kishida",
+    "email": "sizuhiko@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bower": "^1.8.8",
+    "browser-sync": "^2.26.3",
+    "del": "^4.0.0",
+    "gulp": "^4.0.0",
+    "gulp-gae": "0.0.4",
+    "gulp-remote-src": "^0.4.4",
+    "gulp-replace": "^1.0.0",
+    "gulp-touch": "^1.0.1",
+    "hydrolysis": "^1.25.0",
+    "loop": "^2.1.2",
+    "polymer-cli": "^1.9.7",
+    "polymer-modulizer": "^0.4.3",
+    "run-sequence": "^2.2.1",
+    "tcp-ping": "^0.1.1"
+  },
+  "devDependencies": {
+    "decode-html": "^2.0.0",
+    "gulp-aglio": "0.0.10",
+    "gulp-bower": "0.0.14",
+    "gulp-composer": "^0.4.5",
+    "gulp-exit": "0.0.2",
+    "gulp-insert": "^0.5.0",
+    "junit-viewer": "^4.11.1",
+    "wait-on": "^3.2.0",
+    "web-component-tester": "^6.9.2"
+  }
+}
