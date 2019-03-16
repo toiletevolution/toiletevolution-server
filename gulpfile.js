@@ -41,28 +41,33 @@ var dist = function(subpath) {
   return !subpath ? DIST : path.join(DIST, subpath);
 };
 
-// Install dependencies
-gulp.task('install', function() {
-  bower();
-  composer();
+gulp.task('composer', function() {
+  return composer();
 });
+
+gulp.task('bower', function() {
+  return bower();
+});
+
+// Install dependencies
+gulp.task('install', gulp.series('composer', 'bower'));
 
 // Clean output directory
 gulp.task('clean', function() {
   return del([dist()]);
 });
 
-gulp.task('deploy', ['build'], function () {
+gulp.task('build', function(cb) {
+  runSequence('copy-public', 'copy-src', 'copy-vendor', 'copy-etc', 'hotfix-build', 'with-api-key', cb);
+});
+
+gulp.task('deploy', gulp.series('build', function () {
   gulp.src(dist('app.yaml'))
     .pipe(gae('appcfg.py', ['update'], {
       version: 'v1',
       oauth2: undefined // for value-less parameters
     }));
-});
-
-gulp.task('build', function(cb) {
-  runSequence('copy-public', 'copy-src', 'copy-vendor', 'copy-etc', 'hotfix-build', 'with-api-key', cb);
-});
+}));
 
 gulp.task('copy-public', function() {
   return gulp
@@ -101,8 +106,21 @@ gulp.task('with-api-key', function() {
         .pipe(gulp.dest('.'));
 });
 
+gulp.task('gae-serve', function () {
+  gulp
+    .src(dist('app.yml'))
+    .pipe(gae('dev_appserver.py', [], {
+      port: 8888,
+      host: '0.0.0.0',
+      admin_port: 8001,
+      admin_host: '0.0.0.0'
+    }));
+
+  gulp.watch(['app.yml', 'public/**/*.html', 'public/styles/**/*.css', 'public/elements/**/*.css', 'public/images/**/*'], ['build']);
+});
+
 // Watch files for changes & reload
-gulp.task('serve', ['gae-serve'], function() {
+gulp.task('serve', gulp.series('gae-serve', function() {
 
 
   loop.run(function (next) {
@@ -141,20 +159,7 @@ gulp.task('serve', ['gae-serve'], function() {
   }, 0);
 
 
-});
-
-gulp.task('gae-serve', function () {
-  gulp
-    .src(dist('app.yml'))
-    .pipe(gae('dev_appserver.py', [], {
-      port: 8888,
-      host: '0.0.0.0',
-      admin_port: 8001,
-      admin_host: '0.0.0.0'
-    }));
-
-  gulp.watch(['app.yml', 'public/**/*.html', 'public/styles/**/*.css', 'public/elements/**/*.css', 'public/images/**/*'], ['build']);
-});
+}));
 
 gulp.task('debug', function (done) {
   gulp
@@ -178,7 +183,7 @@ gulp.task('copy-php.ini', function() {
     .pipe(gulp.dest('./tests'));
 });
 
-gulp.task('test', ['copy-php.ini'], function(done) {
+gulp.task('test', gulp.series('copy-php.ini', function(done) {
   gulp
     .src('tests/app.yml')
     .pipe(gae('dev_appserver.py', ['--dev_appserver_log_level=error'], {
@@ -203,7 +208,7 @@ gulp.task('test', ['copy-php.ini'], function(done) {
       });
     });
   });
-});
+}));
 
 gulp.task('docs', function () {
   gulp.src('docs/*.md')
@@ -212,13 +217,13 @@ gulp.task('docs', function () {
 });
 
 // Build production files, the default task
-gulp.task('default', ['clean'], function(cb) {
+gulp.task('default', gulp.series('clean', function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
   runSequence(
     'build',
     'serve',
     cb);
-});
+}));
 
 // Load tasks for web-component-tester
 // Adds tasks for `gulp test:local` and `gulp test:remote`
