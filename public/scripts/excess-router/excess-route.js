@@ -151,12 +151,12 @@ import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
 const $_documentContainer = document.createElement('template');
 
 $_documentContainer.innerHTML = `<dom-module id="excess-route">
-  <style>
-    :host {
-      display: block;
-    }
-  </style>
   <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
     <slot></slot>
   </template>
 </dom-module>`;

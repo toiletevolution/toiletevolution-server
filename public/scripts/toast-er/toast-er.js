@@ -105,102 +105,102 @@ import '../iron-signals/iron-signals.js';
 const $_documentContainer = document.createElement('template');
 
 $_documentContainer.innerHTML = `<dom-module id="toast-er">
-  <style>
-  :host {
-    display: inline-block;
-    box-sizing: border-box;
-    position: fixed;
-  }
-  #grill {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    height: 5px;
-    width: 100%;
-  }
-  .info {
-    background-color: rgb(0, 186, 255);
-  }
-  .success {
-    background-color: rgb(11, 219, 0);
-  }
-  .warning {
-    background-color: rgb(255, 168, 0);
-  }
-  .error {
-    background-color: rgb(251, 0, 0);
-  }
-  @-webkit-keyframes cooking {
-    from {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  @keyframes cooking {
-    from {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  .low {
-    -webkit-animation: cooking 3s linear 0.2s infinite;
-    animation: cooking 3s linear 0.2s infinite;
-  }
-  .middle {
-    -webkit-animation: cooking 2s linear 0.2s infinite;
-    animation: cooking 2s linear 0.2s infinite;
-  }
-  .high {
-    -webkit-animation: cooking 1s linear 0.2s infinite;
-    animation: cooking 1s linear 0.2s infinite;
-  }
-  :host.top-left,
-  :host.bottom-left {
-    left: 0;
-  }
-  :host.top-left,
-  :host.top-right {
-    top: 0;
-    transform: translateY(0px);
-  }
-  :host.top-left paper-toast,
-  :host.top-right paper-toast {
-    top: 0;
-    transform: translateY(-100px);
-  }
-  :host.top-left paper-toast.paper-toast-open,
-  :host.top-right paper-toast.paper-toast-open {
-    top: 12px;
-    transform: translateY(0px);
-  }
-  :host.bottom-left,
-  :host.bottom-right {
-    bottom: 0;
-    transform: translateY(0px);
-  }
-  :host.bottom-left paper-toast,
-  :host.bottom-right paper-toast {
-    bottom: 0;
-    transform: translateY(100px);
-  }
-  :host.bottom-left paper-toast.paper-toast-open,
-  :host.bottom-right paper-toast.paper-toast-open {
-    bottom: 12px;
-    transform: translateY(0px);
-  }
-  </style>
-
   <template>
+    <style>
+    :host {
+      display: inline-block;
+      box-sizing: border-box;
+      position: fixed;
+    }
+    #grill {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      height: 5px;
+      width: 100%;
+    }
+    .info {
+      background-color: rgb(0, 186, 255);
+    }
+    .success {
+      background-color: rgb(11, 219, 0);
+    }
+    .warning {
+      background-color: rgb(255, 168, 0);
+    }
+    .error {
+      background-color: rgb(251, 0, 0);
+    }
+    @-webkit-keyframes cooking {
+      from {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    @keyframes cooking {
+      from {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    .low {
+      -webkit-animation: cooking 3s linear 0.2s infinite;
+      animation: cooking 3s linear 0.2s infinite;
+    }
+    .middle {
+      -webkit-animation: cooking 2s linear 0.2s infinite;
+      animation: cooking 2s linear 0.2s infinite;
+    }
+    .high {
+      -webkit-animation: cooking 1s linear 0.2s infinite;
+      animation: cooking 1s linear 0.2s infinite;
+    }
+    :host.top-left,
+    :host.bottom-left {
+      left: 0;
+    }
+    :host.top-left,
+    :host.top-right {
+      top: 0;
+      transform: translateY(0px);
+    }
+    :host.top-left paper-toast,
+    :host.top-right paper-toast {
+      top: 0;
+      transform: translateY(-100px);
+    }
+    :host.top-left paper-toast.paper-toast-open,
+    :host.top-right paper-toast.paper-toast-open {
+      top: 12px;
+      transform: translateY(0px);
+    }
+    :host.bottom-left,
+    :host.bottom-right {
+      bottom: 0;
+      transform: translateY(0px);
+    }
+    :host.bottom-left paper-toast,
+    :host.bottom-right paper-toast {
+      bottom: 0;
+      transform: translateY(100px);
+    }
+    :host.bottom-left paper-toast.paper-toast-open,
+    :host.bottom-right paper-toast.paper-toast-open {
+      bottom: 12px;
+      transform: translateY(0px);
+    }
+    </style>
+
     <paper-toast id="toast">
       <span id="grill"></span>
     </paper-toast>
