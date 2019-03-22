@@ -1,0 +1,40 @@
+{
+  "name": "excess-router",
+  "version": "0.9.14",
+  "description": "Express-style routing for Polymer",
+  "homepage": "https://atotic.github.io/excess-router",
+  "main": "excess-router.html",
+  "authors": [
+    "Aleks Totic <a@totic.org>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "keywords": [
+    "web-components",
+    "polymer",
+    "router"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "*",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-input": "PolymerElements/iron-input#^1.0.0",
+    "iron-pages": "PolymerElements/iron-pages#^1.0.0"
+  },
+  "_release": "0.9.14",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.9.14",
+    "commit": "4b837212ce62628cd109df73434c9055d5714d10"
+  },
+  "_source": "https://github.com/atotic/excess-router.git",
+  "_target": "^0.9.14",
+  "_originalSource": "excess-router"
+}

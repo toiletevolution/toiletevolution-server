@@ -1,11 +1,13 @@
-import '../bower_components/app-layout/app-scroll-effects/app-scroll-effects-behavior.js';
+import {registerEffect} from '@polymer/app-layout/helpers/helpers.js';
+import '@polymer/app-layout/app-scroll-effects/app-scroll-effects-behavior.js';
+
 /**
  * Upon scrolling past a threshold, fade in the rear background layer and fade out the front
  * background layer (opacity CSS transitioned over time).
  *
  *
  */
-Polymer.AppLayout.registerEffect('te-fade-background', {
+registerEffect('te-fade-background', {
   /** @this Polymer.AppLayout.ElementWithBackground */
   setUp: function setUp(config) {
     var fx = {};

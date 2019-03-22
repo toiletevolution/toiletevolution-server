@@ -1,10 +1,12 @@
-import '../bower_components/polymer/polymer-legacy.js';
-import '../bower_components/app-layout/app-scroll-effects/app-scroll-effects.js';
-import '../bower_components/app-layout/app-box/app-box.js';
+import '@polymer/polymer/polymer-legacy.js';
+import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '@polymer/app-layout/app-scroll-effects/app-scroll-effects.js';
+import '@polymer/app-layout/app-box/app-box.js';
 import './te-fade-background.js';
 
 Polymer({
-  _template: Polymer.html`
+  _template: html`
     <style>
       :host {
         margin: 0;
@@ -19,6 +21,14 @@ Polymer({
 
       app-box {
         height: 600px;
+      }
+
+      .logo {
+        --app-box-background-front-layer: {
+          background-image: url(/images/wc-265279_1920.jpg);
+          width:100%;
+          height: 800px;
+        }
       }
 
       .problem {
@@ -110,18 +120,12 @@ Polymer({
     </style>
     <div id="scrollingRegion">
       <section>
-        <app-box scroll-target="scrollingRegion" effects="parallax-background te-fade-background">
+        <app-box class="logo" scroll-target="scrollingRegion" effects="parallax-background te-fade-background">
           <article>
             <h2>トイレの空き状況を<br>見える化したい</h2>
             <p>Toilet Evolutionは、そんな要望に応えるための<br>IoTサービスプラットフォームです。</p>
             <p><img src="/images/logo.png" class="logo"></p>
           </article>
-          <!--
-  app-box allows to style the mixin \`--app-box-background-front-layer\` or create a custom background in the light DOM.
-  In this case, we create a custom background by adding the attribute \`background\` to the \`img\` in
-  the light DOM.
-  -->
-          <img background="" src="/images/wc-265279_1920.jpg" style="width:100%; height: 800px">
         </app-box>
       </section>
 

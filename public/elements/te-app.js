@@ -7,34 +7,31 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
-import '../bower_components/polymer/polymer-legacy.js';
-
-import '../bower_components/app-layout/app-drawer-layout/app-drawer-layout.js';
-import '../bower_components/app-layout/app-drawer/app-drawer.js';
-import '../bower_components/app-layout/app-scroll-effects/app-scroll-effects.js';
-import '../bower_components/app-layout/app-header/app-header.js';
-import '../bower_components/app-layout/app-header-layout/app-header-layout.js';
-import '../bower_components/app-layout/app-toolbar/app-toolbar.js';
-import '../bower_components/excess-router/excess-router.js';
-import '../bower_components/iron-ajax/iron-ajax.js';
-import '../bower_components/iron-flex-layout/iron-flex-layout.js';
-import '../bower_components/iron-icon/iron-icon.js';
-import '../bower_components/iron-icons/iron-icons.js';
-import '../bower_components/iron-icons/notification-icons.js';
-import '../bower_components/iron-pages/iron-pages.js';
-import '../bower_components/paper-icon-button/paper-icon-button.js';
-import '../bower_components/paper-styles/paper-styles.js';
-import '../bower_components/toast-er/toast-er.js';
-import './te-devices.js';
-import './te-admin.js';
-import './te-login.js';
-import './te-about.js';
+import '@polymer/polymer/polymer-legacy.js';
+import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
+import '@polymer/app-layout/app-drawer/app-drawer.js';
+import '@polymer/app-layout/app-scroll-effects/app-scroll-effects.js';
+import '@polymer/app-layout/app-header/app-header.js';
+import '@polymer/app-layout/app-header-layout/app-header-layout.js';
+import '@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '../scripts/excess-router/excess-router.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/iron-icons/notification-icons.js';
+import '@polymer/iron-pages/iron-pages.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-styles/paper-styles.js';
+import '../scripts/toast-er/toast-er.js';
 import './te-icons.js';
 import './te-menu.js';
 import './te-theme.js';
 
 Polymer({
-  _template: Polymer.html`
+  _template: html`
     <style>
 
       :host {
@@ -70,12 +67,15 @@ Polymer({
       app-drawer > app-toolbar {
         border-bottom: var(--drawer-border-color);
       }
+      app-drawer-layout:not([narrow]) [drawer-toggle] {
+        display: none;
+      }
     </style>
 
     <app-drawer-layout fullbleed="" narrow="{{narrow}}">
 
       <!-- Drawer content -->
-      <app-drawer>
+      <app-drawer  slot="drawer">
         <app-toolbar>
           <iron-icon class="logo" src="../images/logo.png"></iron-icon>
           <div class="title">Toilet Evolution</div>
@@ -86,9 +86,9 @@ Polymer({
       <!-- Main content -->
       <app-header-layout has-scrolling-region="">
 
-        <app-header fixed="" condenses="" effects="waterfall">
+        <app-header fixed="" condenses="" effects="waterfall" slot="header">
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle=""></paper-icon-button>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             {{title}}
           </app-toolbar>
         </app-header>

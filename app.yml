@@ -21,8 +21,8 @@ handlers:
   static_files: public/favicon.ico
   upload: public/favicon.ico
 
-- url: /bower_components
-  static_dir: public/bower_components
+- url: /node_modules
+  static_dir: node_modules
 
 - url: /images
   static_dir: public/images

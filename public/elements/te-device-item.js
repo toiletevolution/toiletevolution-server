@@ -1,13 +1,15 @@
-import '../bower_components/polymer/polymer-legacy.js';
-import '../bower_components/iron-ajax/iron-ajax.js';
-import '../bower_components/iron-icon/iron-icon.js';
-import '../bower_components/iron-icons/iron-icons.js';
-import '../bower_components/paper-icon-button/paper-icon-button.js';
-import '../bower_components/paper-item/paper-item.js';
-import '../bower_components/paper-item/paper-item-body.js';
+import '@polymer/polymer/polymer-legacy.js';
+import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-item/paper-item-body.js';
 
 Polymer({
-  _template: Polymer.html`
+  _template: html`
     <style>
       :host {
         display: block;

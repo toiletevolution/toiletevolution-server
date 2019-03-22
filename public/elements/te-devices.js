@@ -1,6 +1,8 @@
-import '../bower_components/polymer/polymer-legacy.js';
-import '../bower_components/iron-pages/iron-pages.js';
-import '../bower_components/paper-styles/paper-styles.js';
+import '@polymer/polymer/polymer-legacy.js';
+import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '@polymer/iron-pages/iron-pages.js';
+import '@polymer/paper-styles/paper-styles.js';
 import './te-device-detail.js';
 import './te-device-item.js';
 import './te-device-list.js';
@@ -8,7 +10,7 @@ import './te-icon.js';
 import './mdi.js';
 
 Polymer({
-  _template: Polymer.html`
+  _template: html`
     <style>
       :host {
         display: block;

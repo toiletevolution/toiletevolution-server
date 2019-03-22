@@ -1,21 +1,23 @@
-import '../bower_components/polymer/polymer-legacy.js';
-import '../bower_components/google-map/google-map.js';
-import '../bower_components/google-map/google-map-marker.js';
-import '../bower_components/iron-ajax/iron-ajax.js';
-import '../bower_components/iron-icon/iron-icon.js';
-import '../bower_components/iron-icons/iron-icons.js';
-import '../bower_components/iron-icons/maps-icons.js';
-import '../bower_components/iron-icons/notification-icons.js';
-import '../bower_components/iron-pages/iron-pages.js';
-import '../bower_components/paper-styles/paper-styles.js';
-import '../bower_components/paper-tabs/paper-tabs.js';
+import '@polymer/polymer/polymer-legacy.js';
+import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '../scripts/google-map/google-map.js';
+import '../scripts/google-map/google-map-marker.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/iron-icons/maps-icons.js';
+import '@polymer/iron-icons/notification-icons.js';
+import '@polymer/iron-pages/iron-pages.js';
+import '@polymer/paper-styles/paper-styles.js';
+import '@polymer/paper-tabs/paper-tabs.js';
 import './te-device-value-status.js';
 import './te-device-value-graph.js';
 import './te-icon.js';
 import './mdi.js';
 
 Polymer({
-  _template: Polymer.html`
+  _template: html`
     <style>
       :host {
         display: block;
@@ -59,7 +61,7 @@ Polymer({
       </div>
       <div>
         <google-map map="{{map}}" latitude="[[device.latitude]]" longitude="[[device.longitude]]" zoom="17" api-key="">
-          <google-map-marker id="location" latitude="[[device.latitude]]" longitude="[[device.longitude]]"></google-map-marker>
+          <google-map-marker slot="google-map-marker" id="location" latitude="[[device.latitude]]" longitude="[[device.longitude]]"></google-map-marker>
         </google-map>
       </div>
       <div>

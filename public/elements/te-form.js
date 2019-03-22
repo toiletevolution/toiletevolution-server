@@ -1,22 +1,24 @@
-import '../bower_components/polymer/polymer-legacy.js';
-import '../bower_components/geo-location/geo-location.js';
-import '../bower_components/gold-password-input/gold-password-input.js';
-import '../bower_components/google-map/google-map.js';
-import '../bower_components/iron-ajax/iron-ajax.js';
-import '../bower_components/iron-flex-layout/iron-flex-layout.js';
-import '../bower_components/iron-form/iron-form.js';
-import '../bower_components/iron-label/iron-label.js';
-import '../bower_components/paper-input/paper-input.js';
-import '../bower_components/paper-button/paper-button.js';
-import '../bower_components/paper-dropdown-menu/paper-dropdown-menu.js';
-import '../bower_components/paper-item/paper-item.js';
-import '../bower_components/paper-listbox/paper-listbox.js';
-import '../bower_components/paper-spinner/paper-spinner.js';
-import '../bower_components/paper-card/paper-card.js';
-import '../bower_components/paper-styles/paper-styles.js';
+import '@polymer/polymer/polymer-legacy.js';
+import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '../scripts/geo-location/geo-location.js';
+import '../scripts/gold-password-input/gold-password-input.js';
+import '../scripts/google-map/google-map.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import '@polymer/iron-form/iron-form.js';
+import '@polymer/iron-label/iron-label.js';
+import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-spinner/paper-spinner.js';
+import '@polymer/paper-card/paper-card.js';
+import '@polymer/paper-styles/paper-styles.js';
 
 Polymer({
-  _template: Polymer.html`
+  _template: html`
     <style>
       :host {
         display: block;
@@ -94,7 +96,7 @@ Polymer({
         <iron-label class="geo">
           設置場所
           <google-map map="{{map}}" latitude="[[lat]]" longitude="[[lng]]" zoom="17" api-key="">
-            <google-map-marker id="location" latitude="[[lat]]" longitude="[[lng]]" draggable="true"></google-map-marker>
+            <google-map-marker slot="google-map-marker" id="location" latitude="[[lat]]" longitude="[[lng]]" draggable="true"></google-map-marker>
           </google-map>
         </iron-label>
 

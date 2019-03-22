@@ -1,4 +1,4 @@
-import '../bower_components/iron-iconset-svg/iron-iconset-svg.js';
+import '@polymer/iron-iconset-svg/iron-iconset-svg.js';
 const $_documentContainer = document.createElement('template');
 
 $_documentContainer.innerHTML = `<iron-iconset-svg name="te-icon" size="100">

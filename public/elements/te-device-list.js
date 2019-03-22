@@ -1,12 +1,14 @@
-import '../bower_components/polymer/polymer-legacy.js';
-import '../bower_components/iron-ajax/iron-ajax.js';
-import '../bower_components/paper-fab/paper-fab.js';
-import '../bower_components/paper-listbox/paper-listbox.js';
-import '../bower_components/paper-styles/paper-styles.js';
+import '@polymer/polymer/polymer-legacy.js';
+import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/paper-fab/paper-fab.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-styles/paper-styles.js';
 import './te-device-item.js';
 
 Polymer({
-  _template: Polymer.html`
+  _template: html`
     <style>
       :host {
         display: block;
