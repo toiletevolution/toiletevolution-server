@@ -6,6 +6,7 @@ import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-icons/iron-icons.js';
 import '@polymer/iron-icons/notification-icons.js';
 import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-item/paper-item-body.js';
 import '@polymer/paper-item/paper-icon-item.js';
 import '@polymer/paper-item/paper-item-shared-styles.js';
 import '../scripts/paper-menu/paper-menu.js';
@@ -23,7 +24,8 @@ Polymer({
       .menu-content paper-item {
         padding-left: 48px;
       }
-      .menu-content a {
+      .menu-content a,
+      a#linkdoc {
         color: var(--menu-link-color);
         text-decoration: none;
       }
@@ -64,9 +66,9 @@ Polymer({
           </template>
         </paper-menu>
       </paper-submenu>
-      <paper-menu slot="menu-content" class="menu-content">
-        <a href="/docs/devices.html" target="_blank"><paper-icon-item><iron-icon icon="icons:description" item-icon="" slot="item-icon"></iron-icon><paper-item-body>APIドキュメント</paper-item-body><iron-icon icon="icons:open-in-new"></iron-icon></paper-icon-item></a>
-      </paper-menu>
+      <paper-submenu label="apis">
+        <a id="linkdoc" href="/docs/devices.html" target="_blank"><paper-icon-item><iron-icon icon="icons:description" item-icon="" slot="item-icon"></iron-icon><paper-item-body>APIドキュメント</paper-item-body><iron-icon icon="icons:open-in-new"></iron-icon></paper-icon-item></a>
+      </paper-submenu>
       <template is="dom-if" if="{{!notExists(user)}}">
         <paper-icon-item><iron-icon src="{{user.avatar}}" item-icon="" slot="item-icon"></iron-icon>{{user.name}}</paper-icon-item>
       </template>

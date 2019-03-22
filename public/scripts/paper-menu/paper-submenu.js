@@ -64,11 +64,12 @@ Polymer({
     <style include="paper-menu-shared-styles"></style>
 
     <div class="selectable-content" on-tap="_onTap">
-      <slot id="trigger" name="menu-trigger"></parseFloat>
+      <slot id="trigger" name="menu-trigger"></slot>
     </div>
     <iron-collapse id="collapse" opened="{{opened}}">
       <slot id="content" name="menu-content"></slot>
     </iron-collapse>
+    <slot></slot>
 `,
 
   is: 'paper-submenu',
