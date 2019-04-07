@@ -1,11 +1,11 @@
 {
   "entrypoint": "public/index.html",
-  "shell": "public/elements/te-app.html",
+  "shell": "public/elements/te-app.js",
   "fragments": [
-    "public/elements/te-devices.html",
-    "public/elements/te-admin.html",
-    "public/elements/te-login.html",
-    "public/elements/te-about.html"
+    "public/elements/te-devices.js",
+    "public/elements/te-admin.js",
+    "public/elements/te-login.js",
+    "public/elements/te-about.js"
   ],
   "sources": [
     "src/**/*",
@@ -20,7 +20,24 @@
     "app.yml",
     "php.ini"
   ],
-  "includeDependencies": [
-    "public/bower_components/webcomponentsjs/webcomponents-lite.js"
-  ]
+  "extraDependencies": [
+    "node_modules/@webcomponents/webcomponentsjs/*.js",
+    "!node_modules/@webcomponents/webcomponentsjs/gulpfile.js",
+    "node_modules/@webcomponents/webcomponentsjs/bundles/*.js"
+  ],
+  "builds": [{
+    "js": {"minify": true, "compile": true},
+    "css": {"minify": true},
+    "html": {"minify": true},
+    "bundle": true,
+    "addServiceWorker": true,
+    "addPushManifest": false
+  }],
+  "moduleResolution": "node",
+  "npm": true,
+  "lint": {
+    "rules": [
+      "polymer-3"
+    ]
+  }
 }

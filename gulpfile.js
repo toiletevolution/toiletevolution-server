@@ -1,108 +1,108 @@
 'use strict';
 
 // Include Gulp & tools we'll use
-var gulp = require('gulp');
-var gae = require('gulp-gae');
+const gulp = require('gulp');
+const gae = require('gulp-gae');
 
-var del = require('del');
-var runSequence = require('run-sequence');
-var browserSync = require('browser-sync');
-var reload = browserSync.reload;
-var path = require('path');
-var exec = require('child_process').exec;
-var tcpp = require('tcp-ping');
-var loop = require('loop')();
-var remoteSrc = require('gulp-remote-src');
-var replace = require('gulp-replace');
-var waitOn = require('wait-on');
-var insert = require('gulp-insert');
-var http = require('http');
-var exit = require('gulp-exit');
-var decode = require('decode-html');
-var bower = require('gulp-bower');
-var composer = require('gulp-composer');
-var aglio = require('gulp-aglio');
+const del = require('del');
+const browserSync = require('browser-sync');
+const path = require('path');
+const tcpp = require('tcp-ping');
+const loop = require('loop')();
+const remoteSrc = require('gulp-remote-src');
+const replace = require('gulp-replace');
+const waitOn = require('wait-on');
+const insert = require('gulp-insert');
+const http = require('http');
+const decode = require('decode-html');
+const composer = require('gulp-composer');
+const aglio = require('gulp-aglio');
+const {PolymerProject, getOptimizeStreams, HtmlSplitter} = require('polymer-build');
+const mergeStream = require('merge-stream');
+const gulpif = require('gulp-if');
+ 
+const project = new PolymerProject(require('./polymer.json'));
+const htmlSplitter = new HtmlSplitter();
 
-var AUTOPREFIXER_BROWSERS = [
-  'ie >= 10',
-  'ie_mob >= 10',
-  'ff >= 30',
-  'chrome >= 34',
-  'safari >= 7',
-  'opera >= 23',
-  'ios >= 7',
-  'android >= 4.4',
-  'bb >= 10'
-];
+const DIST = '.tmp';
 
-var DIST = '.tmp';
-
-var dist = function(subpath) {
+const dist = function(subpath) {
   return !subpath ? DIST : path.join(DIST, subpath);
 };
 
-// Install dependencies
-gulp.task('install', function() {
-  bower();
-  composer();
+gulp.task('composer', function() {
+  return composer();
 });
+
+// Install dependencies
+gulp.task('install', gulp.series('composer'));
 
 // Clean output directory
 gulp.task('clean', function() {
   return del([dist()]);
 });
 
-gulp.task('deploy', ['build'], function () {
+gulp.task('polymer-build', function() {
+  return mergeStream(project.sources(), project.dependencies())
+//    .pipe(project.addCustomElementsEs5Adapter())
+    .pipe(project.bundler())
+//    .pipe(htmlSplitter.split())
+//    .pipe(gulpif(/\.js$/, getOptimizeStreams({
+//      js: {
+//        compile: true,
+//        moduleResolution: project.config.moduleResolution,
+//      },
+//      entrypointPath: project.config.entrypoint,
+//      rootDir: project.config.root,
+//    })[0]))
+//    .pipe(htmlSplitter.rejoin())
+    .pipe(gulp.dest(dist()));
+});
+
+gulp.task('remote-src', function() {
+  return remoteSrc(['loader.js'], {base: 'https://www.gstatic.com/charts/'})
+    .pipe(gulp.dest('.tmp/public/bower_components/google-chart'));
+});
+
+gulp.task('hotfix-build', gulp.series('remote-src', function(done) {
+  require('fs').writeFileSync('.tmp/public/bower_components/google-chart/charts-loader.js', '<script src="loader.js"></script>');
+  done();
+}));
+
+gulp.task('with-api-key', function() {
+  return gulp
+        .src(['.tmp/public/elements/te-admin.js', '.tmp/public/elements/te-devices.js'], {base: '.'})
+        .pipe(replace('api-key=""', 'api-key="'+process.env.APIKEY+'"'))
+        .pipe(gulp.dest('.'));
+});
+
+gulp.task('build', gulp.series('clean', 'polymer-build', 'with-api-key', function(done) {
+  done();
+}));
+
+gulp.task('deploy', gulp.series('build', function () {
   gulp.src(dist('app.yaml'))
     .pipe(gae('appcfg.py', ['update'], {
       version: 'v1',
       oauth2: undefined // for value-less parameters
     }));
-});
+}));
 
-gulp.task('build', function(cb) {
-  runSequence('copy-public', 'copy-src', 'copy-vendor', 'copy-etc', 'hotfix-build', 'with-api-key', cb);
-});
+gulp.task('gae-serve', function () {
+  gulp
+    .src(dist('app.yml'))
+    .pipe(gae('dev_appserver.py', [], {
+      port: 8888,
+      host: '0.0.0.0',
+      admin_port: 8001,
+      admin_host: '0.0.0.0'
+    }));
 
-gulp.task('copy-public', function() {
-  return gulp
-    .src(['./public/**/*'], {base: '.'})
-    .pipe(gulp.dest(dist()));
-});
-
-gulp.task('copy-src', function() {
-  return gulp
-    .src(['./src/**/*'], {base: '.'})
-    .pipe(gulp.dest(dist()));
-});
-
-gulp.task('copy-vendor', function() {
-  return gulp
-    .src(['./vendor/**/*'], {base: '.'})
-    .pipe(gulp.dest(dist()));
-});
-
-gulp.task('copy-etc', function() {
-  return gulp
-    .src(['app.yml', 'php.ini', 'polymer.json'])
-    .pipe(gulp.dest(dist()));
-});
-
-gulp.task('hotfix-build', function() {
-  remoteSrc(['loader.js'], {base: 'https://www.gstatic.com/charts/'})
-    .pipe(gulp.dest('.tmp/public/bower_components/google-chart'));
-  require('fs').writeFileSync('.tmp/public/bower_components/google-chart/charts-loader.html', '<script src="loader.js"></script>');
-});
-
-gulp.task('with-api-key', function() {
-  return gulp
-        .src(['.tmp/public/elements/te-form.html', '.tmp/public/elements/te-device-detail.html'], {base: '.'})
-        .pipe(replace('api-key=""', 'api-key="'+process.env.APIKEY+'"'))
-        .pipe(gulp.dest('.'));
+  gulp.watch(['app.yml', 'public/**/*.html', 'public/**/*.js', 'public/styles/**/*.css', 'public/elements/**/*.css', 'public/images/**/*'], gulp.task('build'));
 });
 
 // Watch files for changes & reload
-gulp.task('serve', ['gae-serve'], function() {
+gulp.task('serve', gulp.series('gae-serve', function() {
 
 
   loop.run(function (next) {
@@ -141,20 +141,7 @@ gulp.task('serve', ['gae-serve'], function() {
   }, 0);
 
 
-});
-
-gulp.task('gae-serve', function () {
-  gulp
-    .src(dist('app.yml'))
-    .pipe(gae('dev_appserver.py', [], {
-      port: 8888,
-      host: '0.0.0.0',
-      admin_port: 8001,
-      admin_host: '0.0.0.0'
-    }));
-
-  gulp.watch(['app.yml', 'public/**/*.html', 'public/styles/**/*.css', 'public/elements/**/*.css', 'public/images/**/*'], ['build']);
-});
+}));
 
 gulp.task('debug', function (done) {
   gulp
@@ -178,7 +165,7 @@ gulp.task('copy-php.ini', function() {
     .pipe(gulp.dest('./tests'));
 });
 
-gulp.task('test', ['copy-php.ini'], function(done) {
+gulp.task('test', gulp.series('copy-php.ini', function(done) {
   gulp
     .src('tests/app.yml')
     .pipe(gae('dev_appserver.py', ['--dev_appserver_log_level=error'], {
@@ -203,7 +190,7 @@ gulp.task('test', ['copy-php.ini'], function(done) {
       });
     });
   });
-});
+}));
 
 gulp.task('docs', function () {
   gulp.src('docs/*.md')
@@ -212,13 +199,9 @@ gulp.task('docs', function () {
 });
 
 // Build production files, the default task
-gulp.task('default', ['clean'], function(cb) {
-  // Uncomment 'cache-config' if you are going to use service workers.
-  runSequence(
-    'build',
-    'serve',
-    cb);
-});
+gulp.task('default', gulp.series('clean', 'build', 'serve', function(done) {
+  done();
+}));
 
 // Load tasks for web-component-tester
 // Adds tasks for `gulp test:local` and `gulp test:remote`
