@@ -160,12 +160,6 @@ Polymer({
 
   },
 
-  listeners: {
-    'password-changed': 'validatePassword',
-    'repass-changed': 'validatePassword',
-    'num_of_rooms-changed': 'changeRoomsArray'
-  },
-
   // private
   validatePassword: function() {
     this.repassInValid = (this.password !== this.repass);
@@ -234,5 +228,8 @@ Polymer({
       Strong: '強い',
       VeryStrong: '安全'
     };
+    this.addEventListener('password-changed', this.validatePassword);
+    this.addEventListener('repass-changed', this.validatePassword);
+    this.addEventListener('num_of_rooms-changed', this.changeRoomsArray);
   }
 });

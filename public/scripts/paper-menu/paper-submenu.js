@@ -104,9 +104,9 @@ Polymer({
     IronControlState
   ],
 
-  listeners: {
-    'focus': '_onFocus'
-  },
+//  listeners: {
+//    'focus': '_onFocus'
+//  },
 
   get __parent() {
     return dom(this).parentNode;
@@ -215,5 +215,10 @@ Polymer({
    */
   _onFocus: function(event) {
     this.__trigger && this.__trigger.focus();
+  },
+  
+  ready: function() {
+    this.addEventListener('focus', this._onFocus);
   }
+
 });

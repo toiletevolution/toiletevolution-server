@@ -60,32 +60,50 @@ If you're seeing the message "You have included the Google Maps API multiple tim
 import '@polymer/polymer/polymer-legacy.js';
 import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import {dom} from '@polymer/polymer/lib/legacy/polymer.dom.js'
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 
 import '@google-web-components/google-apis/google-maps-api.js';
 import {IronResizableBehavior} from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
 import '@polymer/iron-selector/iron-selector.js';
 import './google-map-marker.js';
-const $_documentContainer = document.createElement('template');
 
-$_documentContainer.innerHTML = `<dom-module id="google-map">
+Polymer({
+  _template: html`
+    <style>
+      :host {
+        position: relative;
+        display: block;
+        height: 100%;
+      }
 
-  <style>
-    :host {
-      position: relative;
-      display: block;
-      height: 100%;
-    }
+      #map {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
 
-    #map {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-    }
+      .gm-control-active>img{
+        box-sizing:content-box;
+        display:none;
+        left:50%;
+        pointer-events:none;
+        position:absolute;
+        top:50%;
+        transform:translate(-50%,-50%)
+      }
+      .gm-control-active>img:nth-child(1){
+        display:block
+      }
+      .gm-control-active:hover>img:nth-child(1),.gm-control-active:active>img:nth-child(1){
+        display:none
+      }
+      .gm-control-active:hover>img:nth-child(2),.gm-control-active:active>img:nth-child(3){
+        display:block
+      }
 
-  </style>
-  <template>
+    </style>
 
     <google-maps-api id="api" api-key="[[apiKey]]" client-id="[[clientId]]" version="[[version]]" signed-in="[[signedIn]]" language="[[language]]" on-api-load="_mapApiLoaded" maps-url="[[mapsUrl]]"></google-maps-api>
 
@@ -95,16 +113,10 @@ $_documentContainer.innerHTML = `<dom-module id="google-map">
       <slot id="markers" name="google-map-marker"></slot>
     </iron-selector>
     <slot id="objects"></slot>
-  </template>
-</dom-module>`;
-
-document.head.appendChild($_documentContainer.content);
-
-Polymer({
+`,
 
   is: 'google-map',
-
-
+  
   /**
    * Fired when the Maps API has fully loaded.
    * @event google-map-ready
@@ -421,10 +433,10 @@ Polymer({
     IronResizableBehavior
   ],
 
-  listeners: {
-    'iron-resize': 'resize'
-  },
-
+//  listeners: {
+//    'iron-resize': 'resize'
+//  },
+//
   observers: [
     '_debounceUpdateCenter(latitude, longitude)'
   ],
@@ -831,6 +843,10 @@ Polymer({
    } else if (this.$.selector.selectedValues) {
     this.$.selector.selectedValues = this.$.selector.selectedValues.filter(function(i) {return i !== markerIndex});
    }
- }
+ },
+
+  ready: function() {
+    this.addEventListener('iron-resize', this.resize);
+  }
 
 });

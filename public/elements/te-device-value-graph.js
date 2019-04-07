@@ -60,7 +60,7 @@ Polymer({
 
   chartData: function(values, roomIndex, threshold) {
     var data = [[{type: 'datetime', label: '日時'}, {type: 'number', label: '計測値'}, {type: 'number', label:'しきい値'}]];
-    values.forEach(function(value){
+    (values || []).forEach(function(value){
       data.push([moment(value.created).toDate(), value.payload[roomIndex], parseFloat(threshold.value)]);
     });
     return data;

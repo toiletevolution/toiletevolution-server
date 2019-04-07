@@ -7,7 +7,6 @@ module: default
 
 skip_files:
 - ^(.*/)?composer\.(phar|lock|json)$
-- ^(node_modules/.*)
 - logs
 - ^\.(bowerrc|editorconfig|gitignore)
 - bower.json

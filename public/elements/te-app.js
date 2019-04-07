@@ -115,12 +115,6 @@ Polymer({
     }
   },
 
-  listeners: {
-    'te-device-created': 'reload',
-    'te-device-deleted': 'reload',
-    'excess-route-will-activate': 'routeChange'
-  },
-
   reload: function() {
     this.$$('te-devices').reload();
   },
@@ -139,5 +133,12 @@ Polymer({
   logined: function() {
     this.unlisten(this.$.ajax_current_user, 'response', 'logined');
     location.href = '/#/admin/devices';
+  },
+  
+  ready: function() {
+    this.addEventListener('te-device-created', this.reload);
+    this.addEventListener('te-device-deleted', this.reload);
+    this.addEventListener('excess-route-will-activate', this.routeChange);
   }
+
 });

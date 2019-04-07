@@ -34,20 +34,9 @@ child of `google-map`.
 */
 import '@polymer/polymer/polymer-legacy.js';
 import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 
 import '@google-web-components/google-apis/google-maps-api.js';
-const $_documentContainer = document.createElement('template');
-
-$_documentContainer.innerHTML = `<dom-module id="google-map-marker">
-  <style>
-    :host {
-      display: none;
-    }
-  </style>
-  <template><slot></slot></template>
-</dom-module>`;
-
-document.head.appendChild($_documentContainer.content);
 
 function setupDragHandler_() {
   if (this.draggable) {
@@ -65,7 +54,15 @@ function onDragEnd_(e, details, sender) {
 }
 
 Polymer({
-
+  _template: html`
+  <style>
+    :host {
+      display: none;
+    }
+  </style>
+  <slot></slot>
+`,
+  
   is: 'google-map-marker',
 
   /**
