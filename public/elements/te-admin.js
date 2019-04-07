@@ -37,14 +37,11 @@ Polymer({
     }
   },
 
-  listeners: {
-    'te-device-created': 'reload'
-  },
-
   reload: function() {
     this.$$('te-devices').reload();
   },
 
   ready: function() {
+    this.addEventListener('te-device-created', this.reload);
   }
 });

@@ -56,10 +56,6 @@ Polymer({
     }
   },
 
-  listeners: {
-    'te-device-deleted': 'reload'
-  },
-
   doRequestIfSelected: function(selected) {
     if(selected) {
       this.reload();
@@ -73,5 +69,6 @@ Polymer({
 
   ready: function() {
     this.url = this.admin? '/admin/devices' : '/api/devices';
+    this.addEventListener('te-device-deleted', this.reload);
   }
 });

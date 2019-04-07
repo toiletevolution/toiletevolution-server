@@ -6,8 +6,6 @@ import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-item/paper-icon-item.js';
 import '@polymer/paper-item/paper-item-body.js';
 import '@polymer/paper-styles/paper-styles.js';
-import moment from 'moment';
-//import 'moment/locale/ja';
 import './te-icon.js';
 import './mdi.js';
 

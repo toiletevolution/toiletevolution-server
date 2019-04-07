@@ -17,7 +17,7 @@ Polymer({
 
     </style>
     <paper-item>
-      <paper-item-body two-line="" id="body">
+      <paper-item-body two-line="" id="body" on-tap="redirectDetail">
         <div class="layout inline">{{item.name}}</div>
         <div secondary="">{{count(item.thresholds)}}個の個室があります</div>
       </paper-item-body>
@@ -37,10 +37,6 @@ Polymer({
     admin: {
       type: Boolean
     }
-  },
-
-  listeners: {
-    'body.tap': 'redirectDetail'
   },
 
   count: function(array) {
