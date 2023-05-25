@@ -3,9 +3,10 @@ namespace Test\ToiletEvolution\Model;
 
 use ToiletEvolution\Models\Device;
 use ToiletEvolution\Models\Entities\DeviceEntity;
-use GeckoPackages\MemcacheMock\MemcachedMock;
+use PHPUnit\Framework\TestCase;
+use M6Web\Component\RedisMock\RedisMock;
 
-class DeviceTest extends \PHPUnit_Framework_TestCase
+class DeviceTest extends TestCase
 {
   private $target;
   private $cache;
@@ -18,40 +19,37 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
   ];
   private $user;
 
-  public function setUp()
+  /**
+   * @before
+   */
+  public function before()
   {
-    parent::setUp();
-    $this->cache = new MemcachedMock();
-    $this->cache->addServer('127.0.0.1', 11211);
+    $this->cache = new RedisMock();
     $this->store = new \GDS\Store('Devices');
     $this->target = new Device($this->store, $this->cache);
     $this->user = new \GDS\Entity();
     $this->user->setKind('User')->setKeyId("".rand());
     $this->store->delete($this->store->fetchAll());
-    $this->cache->flush();
-  }
-
-  public function tearDown()
-  {
+    $this->cache->flushDb();
   }
 
   public function testCreateEmptyEntity()
   {
     $results = $this->target->createEntity();
-    assertInstanceOf(DeviceEntity::class, $results);
+    $this->assertInstanceOf(DeviceEntity::class, $results);
   }
 
   public function testCreateParameterizedEntity()
   {
     $results = $this->target->createEntity($this->testdata, $this->user);
 
-    assertEquals('username', $results->name);
-    assertTrue(password_verify('12345678', $results->password));
-    assertEquals('{"value":20,"condition":"eq"}', $results->thresholds);
-    assertEquals('12.34', $results->latitude);
-    assertEquals('35.67', $results->longitude);
-    assertInstanceOf(\DateTime::class, $results->created_at);
-    assertEquals($this->user->getKeyId(), $results->created_by);
+    $this->assertEquals('username', $results->name);
+    $this->assertTrue(password_verify('12345678', $results->password));
+    $this->assertEquals('{"value":20,"condition":"eq"}', $results->thresholds);
+    $this->assertEquals('12.34', $results->latitude);
+    $this->assertEquals('35.67', $results->longitude);
+    $this->assertInstanceOf(\DateTime::class, $results->created_at);
+    $this->assertEquals($this->user->getKeyId(), $results->created_by);
   }
 
   public function testSaveWithCache()
@@ -59,8 +57,8 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
     $entity = $this->target->createEntity($this->testdata, $this->user);
     $this->target->save($entity);
 
-    assertEquals($entity, $this->cache->get('device:id:'.$entity->getKeyId()));
-    assertEquals('username', $this->store->fetchById($entity->getKeyId())->name);
+    $this->assertEquals($entity, unserialize($this->cache->get('device:id:'.$entity->getKeyId())));
+    $this->assertEquals('username', $this->store->fetchById($entity->getKeyId())->name);
   }
 
   public function testAllCacheShouldRemovedAfterSave()
@@ -70,29 +68,27 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
 
     $this->target->save($entity);
 
-    assertFalse($this->cache->get('device:all'));
-    assertEquals(\Memcached::RES_NOTFOUND, $this->cache->getResultCode());
+    $this->assertEquals($this->cache->exists('device:all'), 0);
   }
 
   public function testCreatedUserCacheShouldRemovedAfterSave()
   {
     $entity = $this->target->createEntity($this->testdata, $this->user);
-    $this->cache->set("device:all:created_by:{$this->user->getKeyId()}", [$entity]);
+    $this->cache->set("device:all:created_by:{$this->user->getKeyId()}", serialize([$entity]));
 
     $this->target->save($entity);
 
-    assertFalse($this->cache->get("device:all:created_by:{$this->user->getKeyId()}"));
+    $this->assertNull($this->cache->get("device:all:created_by:{$this->user->getKeyId()}"));
   }
 
   public function testFindCreatedByIdFromCache()
   {
     $entity = $this->target->createEntity($this->testdata, $this->user);
-    $this->cache->set("device:all:created_by:{$this->user->getKeyId()}", [$entity]);
-
+    $this->cache->set("device:all:created_by:{$this->user->getKeyId()}", serialize([$entity]));
     $actual = $this->target->byCreatedBy($this->user);
 
-    assertCount(1, $actual);
-    assertEquals('username', $actual[0]->name);
+    $this->assertCount(1, $actual);
+    $this->assertEquals('username', $actual[0]->name);
   }
 
   public function testFindCreatedByIdFromDatastore()
@@ -103,18 +99,18 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
 
     $actual = $this->target->byCreatedBy($this->user);
 
-    assertCount(1, $actual);
-    assertEquals('username', $actual[0]->name);
+    $this->assertCount(1, $actual);
+    $this->assertEquals('username', $actual[0]->name);
   }
 
   public function testFindByIdFromCache()
   {
     $entity = $this->target->createEntity($this->testdata, $this->user);
-    $this->cache->set('device:id:1234', $entity);
+    $this->cache->set('device:id:1234', serialize($entity));
 
     $actual = $this->target->byId("1234");
 
-    assertEquals('username', $actual->name);
+    $this->assertEquals('username', $actual->name);
   }
 
   public function testFindByIdFromDatastore()
@@ -123,7 +119,7 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
     $this->store->upsert($entity);
     $actual = $this->target->byId($entity->getKeyId());
 
-    assertEquals('username', $actual->name);
+    $this->assertEquals('username', $actual->name);
   }
 
   public function testFindByIdAndCreatedByShouldReturnNullIfNotExists()
@@ -136,7 +132,7 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
 
     $actual = $this->target->byIdAndCreatedBy($entity->getKeyId(), $anotherUser);
 
-    assertNull($actual);
+    $this->assertNull($actual);
   }
 
   public function testFindByIdAndCreatedBy()
@@ -146,18 +142,18 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
 
     $actual = $this->target->byIdAndCreatedBy($entity->getKeyId(), $this->user);
 
-    assertEquals('username', $actual->name);
+    $this->assertEquals('username', $actual->name);
   }
 
   public function testFindAllFromCache()
   {
     $entity = $this->target->createEntity($this->testdata, $this->user);
-    $this->cache->set("device:all", [$entity]);
+    $this->cache->set("device:all", serialize([$entity]));
 
     $actual = $this->target->all();
 
-    assertCount(1, $actual);
-    assertEquals('username', $actual[0]->name);
+    $this->assertCount(1, $actual);
+    $this->assertEquals('username', $actual[0]->name);
   }
 
   public function testFindAllFromDatastore()
@@ -168,8 +164,8 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
 
     $actual = $this->target->all();
 
-    assertCount(1, $actual);
-    assertEquals('username', $actual[0]->name);
+    $this->assertCount(1, $actual);
+    $this->assertEquals('username', $actual[0]->name);
   }
 
   public function testDelete()
@@ -181,10 +177,10 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
     $this->target->delete($entity);
 
     $actual = $this->store->fetchById($key);
-    assertNull($actual);
-    assertFalse($this->cache->get('device:all'));
-    assertFalse($this->cache->get("device:id:{$key}"));
-    assertFalse($this->cache->get("device:all:created_by:{$this->user->getKeyId()}"));
+    $this->assertNull($actual);
+    $this->assertEquals($this->cache->exists('device:all'), 0);
+    $this->assertEquals($this->cache->exists("device:id:{$key}"), 0);
+    $this->assertEquals($this->cache->exists("device:all:created_by:{$this->user->getKeyId()}"), 0);
   }
 
   /**
@@ -193,7 +189,7 @@ class DeviceTest extends \PHPUnit_Framework_TestCase
   public function testValidate($json, $valid, $message)
   {
     $json = json_decode($json);
-    assertEquals($valid, $this->target->validate($json), $message);
+    $this->assertEquals($valid, $this->target->validate($json), $message);
   }
 
   public function deviceData()

@@ -7,18 +7,35 @@ use GuzzleHttp\Psr7\Response;
 use Helmich\Psr7Assert\Psr7Assertions;
 use Slim\Route;
 use RKA\Session;
+use PHPUnit\Framework\TestCase;
 
-class RequireLoginMiddlewareTest extends \PHPUnit_Framework_TestCase
+class MockMiddleware
+{
+  public function __invoke($request, $response)
+  {
+  }
+}
+
+class MockSession
+{
+  public function get($key, $default = null)
+  {
+  }
+}
+
+final class RequireLoginMiddlewareTest extends TestCase
 {
   use Psr7Assertions;
 
   private $target;
   private $session;
 
-  public function setUp()
+  /**
+   * @before
+   */
+  public function before()
   {
-    parent::setUp();
-    $this->session = $this->getMockBuilder('Session')->setMethods(['get'])->getMock();
+    $this->session = $this->getMockBuilder(MockSession::class)->onlyMethods(['get'])->getMock();
     $this->target = new RequireLoginMiddleware('https://toiletevolution.space', $this->session);
   }
 
@@ -29,7 +46,7 @@ class RequireLoginMiddlewareTest extends \PHPUnit_Framework_TestCase
     $request = $request->withAttribute('route', $route);
     $route->setArgument('provider', 'google');
     $response = new Response();
-    $next = $this->getMock(\stdClass::class, ['__invoke']);
+    $next = $this->createPartialMock(MockMiddleware::class, ['__invoke']);
     $next->expects($this->once())->method('__invoke');
     $user = new \stdClass;
     $this->session->expects($this->once())->method('get')->with($this->equalTo('current_user'))->willReturn($user);
@@ -43,12 +60,12 @@ class RequireLoginMiddlewareTest extends \PHPUnit_Framework_TestCase
     $request = $request->withAttribute('route', $route);
     $route->setArgument('provider', 'oauth2');
     $response = new Response();
-    $next = $this->getMock(\stdClass::class, ['__invoke']);
+    $next = $this->createPartialMock(MockMiddleware::class, ['__invoke']);
     $next->expects($this->never())->method('__invoke');
     $this->session->expects($this->once())->method('get')->with($this->equalTo('current_user'))->willReturn(null);
 
     $results = $this->target->__invoke($request, $response, $next);
-    assertThat($results, hasStatus(302));
-    assertThat($results, hasHeader('Location', 'https://toiletevolution.space'));
+    $this->assertThat($results, hasStatus(302));
+    $this->assertThat($results, hasHeader('Location', 'https://toiletevolution.space'));
   }
 }

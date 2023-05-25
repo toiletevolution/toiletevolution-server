@@ -6,16 +6,26 @@ use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Response;
 use Helmich\Psr7Assert\Psr7Assertions;
 use Slim\Route;
+use PHPUnit\Framework\TestCase;
 
-class AllowedProvidersMiddlewareTest extends \PHPUnit_Framework_TestCase
+class NextMiddleware
+{
+  public function __invoke($request, $response)
+  {
+  }
+}
+
+final class AllowedProvidersMiddlewareTest extends TestCase
 {
   use Psr7Assertions;
 
   private $target;
-  
-  public function setUp()
+
+  /**
+   * @before
+   */
+  public function setUpAllowedProvidersMiddleware()
   {
-    parent::setUp();
     $this->target = new AllowedProvidersMiddleware(['google', 'github']);
   }
 
@@ -26,7 +36,7 @@ class AllowedProvidersMiddlewareTest extends \PHPUnit_Framework_TestCase
     $request = $request->withAttribute('route', $route);
     $route->setArgument('provider', 'google');
     $response = new Response();
-    $next = $this->getMock(\stdClass::class, ['__invoke']);
+    $next = $this->createPartialMock(NextMiddleware::class, ['__invoke']);
     $next->expects($this->once())->method('__invoke');
 
     $this->target->__invoke($request, $response, $next);
@@ -38,10 +48,10 @@ class AllowedProvidersMiddlewareTest extends \PHPUnit_Framework_TestCase
     $request = $request->withAttribute('route', $route);
     $route->setArgument('provider', 'oauth2');
     $response = new Response();
-    $next = $this->getMock(\stdClass::class, ['__invoke']);
+    $next = $this->createPartialMock(NextMiddleware::class, ['__invoke']);
     $next->expects($this->never())->method('__invoke');
 
     $results = $this->target->__invoke($request, $response, $next);
-    assertThat($results, hasStatus(404));
+    $this->assertThat($results, hasStatus(404));
   }
 }

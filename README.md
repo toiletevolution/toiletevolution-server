@@ -15,15 +15,23 @@ https://cloud.google.com/sdk/docs/?hl=ja
 
 またSDKを実行するために `python` が必要になります。バージョン情報などは上記公式ドキュメントを参照してください。
 
-### PHP 5.5
+### PHP 8.2
 
-GAEでサポートされているPHPのバージョンが5.5のため、ローカルにも同じバージョンのPHPが必要になります。
+GAEでサポートされている最新PHPのバージョンが8.2のため、ローカルにも同じバージョンのPHPが必要になります。
 
-以下のようなPHP環境切り替えツールを使って、バージョン5.5のPHPを用意してください。
+以下のようなPHP環境切り替えツールを使って、バージョン8.2のPHPを用意してください。
 
 - anyenv
 - phpenv
 - phpbrew(Mac OSXの場合のみ)
+
+#### 拡張
+
+Redis の拡張をインストールしておくこと
+
+```
+$ pecl install redis
+```
 
 ### Node.js
 
@@ -122,3 +130,27 @@ $ npm start
 $ npm test
 ```
 
+### Redis の起動
+
+```
+$ docker run -e REDIS_ARGS="--requirepass redis" -p 6379:6379 redis/redis-stack:latest
+```
+
+### データストアの起動
+
+```
+$ gcloud beta emulators datastore start
+$ $(gcloud beta emulators datastore env-init)
+```
+
+テストが終了したら以下のコマンドで環境変数を削除できる
+
+```
+$ $(gcloud beta emulators datastore env-unset)
+```
+
+### PHPUnitの実行
+
+```
+composer run-script t
+```

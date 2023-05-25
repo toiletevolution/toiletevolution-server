@@ -9,13 +9,13 @@ use ToiletEvolution\Models\Entities\DeviceEntity;
 class Device
 {
   private $dataStore;
-  private $memcache;
+  private $redis;
 
-  public function __construct($dataStore, $memcache)
+  public function __construct($dataStore, $redis)
   {
     $this->dataStore = $dataStore;
     $this->dataStore->setEntityClass(DeviceEntity::class);
-    $this->memcache = $memcache;
+    $this->redis = $redis;
   }
 
   public function createEntity($properties = null, $created_by = null)
@@ -35,26 +35,30 @@ class Device
 
   public function save($device) {
     $this->dataStore->upsert($device);
-    $this->memcache->set("device:id:{$device->getKeyId()}", $device);
-    $this->memcache->delete("device:all");
-    $this->memcache->delete("device:all:created_by:{$device->created_by}");
+    $this->redis->set("device:id:{$device->getKeyId()}", serialize($device));
+    $this->redis->del("device:all");
+    $this->redis->del("device:all:created_by:{$device->created_by}");
     return $device;
   }
 
   public function byCreatedBy($user) {
-    $devices = $this->memcache->get("device:all:created_by:{$user->getKeyId()}");
-    if($devices === false) {
+    $devices = $this->redis->get("device:all:created_by:{$user->getKeyId()}");
+    if($devices === false || $devices === null) {
       $devices = $this->dataStore->fetchAll("SELECT * FROM Devices WHERE created_by = @createdBy", ['createdBy' => $user->getKeyId()]);
-      $this->memcache->set("device:all:created_by:{$user->getKeyId()}", $devices);
+      $this->redis->set("device:all:created_by:{$user->getKeyId()}", serialize($devices));
+    } else {
+      $devices = unserialize($devices);
     }
     return $this->createResultSets($devices);
   }
 
   public function byId($id) {
-    $device = $this->memcache->get("device:id:{$id}");
-    if($device === false) {
+    $device = $this->redis->get("device:id:{$id}");
+    if($device === false || $device === null) {
       $device = $this->dataStore->fetchById($id);
-      $this->memcache->set("device:id:{$device->getKeyId()}", $device);
+      $this->redis->set("device:id:{$device->getKeyId()}", serialize($device));
+    } else {
+      $device = unserialize($device);
     }
     return $this->createResultSet($device);
   }
@@ -68,27 +72,26 @@ class Device
   }
 
   public function all() {
-    $devices = $this->memcache->get("device:all");
-    if($devices === false) {
+    $devices = $this->redis->get("device:all");
+    if($devices === false || $devices === null) {
       $devices = $this->dataStore->fetchAll();
-      $this->memcache->set("device:all", $devices);
+      $this->redis->set("device:all", serialize($devices));
+    } else {
+      $devices = unserialize($devices);
     }
     return $this->createResultSets($devices);
   }
 
   public function validate($data) {
-    $refResolver = new \JsonSchema\RefResolver(new \JsonSchema\Uri\UriRetriever(), new \JsonSchema\Uri\UriResolver());
-    $schema = $refResolver->resolve('file://' . realpath(__DIR__.'/Schemas/DeviceSchema.json'));
     // Validate
-    $validator = new \JsonSchema\Validator();
-    $validator->check($data, $schema);
-
+    $validator = new \JsonSchema\Validator;
+    $validator->validate($data, (object)['$ref' => 'file://' . realpath(__DIR__.'/Schemas/DeviceSchema.json')]);
     $valid = $validator->isValid();
     return $valid;
   }
 
   public function delete($device) {
-    $this->memcache->deleteMulti([
+    $this->redis->del([
       "device:id:{$device->getKeyId()}",
       "device:all",
       "device:all:created_by:{$device->created_by}",
