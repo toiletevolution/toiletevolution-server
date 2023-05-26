@@ -16,7 +16,7 @@ jobs:
           service_account: 'actions@toiletevolution.iam.gserviceaccount.com'
       - uses: 'google-github-actions/setup-gcloud@v1'
         with:
-          install_components: 'alpha,cloud-datastore-emulator'
+          install_components: 'alpha,beta,cloud-datastore-emulator'
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
