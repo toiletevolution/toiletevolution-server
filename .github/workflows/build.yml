@@ -1,0 +1,22 @@
+name: build
+on:
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: 'google-github-actions/setup-gcloud@v1'
+        with:
+          install_components: 'alpha,cloud-datastore-emulator'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: redis
+      - uses: ramsey/composer-install@v2
+      - run: $(gcloud beta emulators datastore env-init)
+      - run: |
+          gcloud beta emulators datastore start --project toiletevolution-server-test &
+          curl $DATASTORE_HOST --silent --retry 30 --retry-connrefused --retry-delay 1
+      - run: composer run-script t
