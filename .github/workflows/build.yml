@@ -13,7 +13,7 @@ jobs:
       - uses: 'google-github-actions/auth@v1'
         with:
           workload_identity_provider: 'projects/825824562054/locations/global/workloadIdentityPools/actions-pool/providers/actions-provider'
-          service_account: 'toiletevolution@appspot.gserviceaccount.com'
+          service_account: 'actions@toiletevolution.iam.gserviceaccount.com'
       - uses: 'google-github-actions/setup-gcloud@v1'
         with:
           install_components: 'alpha,cloud-datastore-emulator'
