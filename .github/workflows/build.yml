@@ -25,5 +25,5 @@ jobs:
       - run: |
           gcloud beta emulators datastore start --project toiletevolution-server-test &
           curl http://localhost:8081 --silent --retry 30 --retry-connrefused --retry-delay 1
-      - run: eval $(gcloud beta emulators datastore env-init)
+      - run: gcloud beta emulators datastore env-init | sed -e "s/export //g" >> "$GITHUB_ENV"
       - run: composer run-script t
