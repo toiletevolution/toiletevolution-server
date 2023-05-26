@@ -22,7 +22,7 @@ jobs:
           php-version: '8.2'
           extensions: redis
       - uses: ramsey/composer-install@v2
-      - run: $(gcloud beta emulators datastore env-init)
+      - run: eval $(gcloud beta emulators datastore env-init)
       - run: |
           gcloud beta emulators datastore start --project toiletevolution-server-test &
           curl $DATASTORE_HOST --silent --retry 30 --retry-connrefused --retry-delay 1
