@@ -1,0 +1,29 @@
+name: build
+on:
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: 'google-github-actions/auth@v1'
+        with:
+          workload_identity_provider: 'projects/825824562054/locations/global/workloadIdentityPools/actions-pool/providers/actions-provider'
+          service_account: 'actions@toiletevolution.iam.gserviceaccount.com'
+      - uses: 'google-github-actions/setup-gcloud@v1'
+        with:
+          install_components: 'alpha,beta,cloud-datastore-emulator'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: redis
+      - uses: ramsey/composer-install@v2
+      - run: |
+          gcloud beta emulators datastore start --project toiletevolution-server-test &
+          curl http://localhost:8081 --silent --retry 30 --retry-connrefused --retry-delay 1
+      - run: gcloud beta emulators datastore env-init | sed -e "s/export //g" >> "$GITHUB_ENV"
+      - run: composer run-script t
