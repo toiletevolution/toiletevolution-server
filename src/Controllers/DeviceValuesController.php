@@ -7,12 +7,12 @@ use Carbon\Carbon;
 class DeviceValuesController
 {
   protected $ci;
-  private $memcache;
+  private $redis;
 
   public function __construct(ContainerInterface $ci)
   {
     $this->ci = $ci;
-    $this->memcache = $this->ci->get(\Memcached::class);
+    $this->redis = $this->ci->get(\Redis::class);
   }
 
   public function get($request, $response, $args)
@@ -21,7 +21,7 @@ class DeviceValuesController
     $bucketName = $this->ci->get('settings')['storage']['name'];
     $fileName = "gs://{$bucketName}/${id}.json";
 
-    $cache = $this->memcache->get($fileName);
+    $cache = $this->redis->get($fileName);
     if ($cache === false) {
       if(file_exists($fileName)) {
         $data = json_decode(file_get_contents($fileName), true);
@@ -29,6 +29,7 @@ class DeviceValuesController
         $data = [];
       }
     } else {
+      $cache = unserialize($cache);
       $data = $cache['data'];
     }
 
@@ -52,7 +53,7 @@ class DeviceValuesController
     $fileName = "gs://{$bucketName}/${id}.json";
     $cacheCount = 0;
 
-    $cache = $this->memcache->get($fileName);
+    $cache = $this->redis->get($fileName);
     if ($cache === false) {
       if(file_exists($fileName)) {
         $data = json_decode(file_get_contents($fileName), true);
@@ -60,6 +61,7 @@ class DeviceValuesController
         $data = [];
       }
     } else {
+      $cache = unserialize($cache);
       $data = $cache['data'];
       $cacheCount = $cache['count'];
     }
@@ -82,7 +84,7 @@ class DeviceValuesController
       file_put_contents($fileName, json_encode($filtered));
       $cacheCount = 30;
     }
-    $this->memcache->set($fileName, ['data' => $filtered, 'count' => ($cacheCount - 1)]);
+    $this->redis->set($fileName, serialize(['data' => $filtered, 'count' => ($cacheCount - 1)]));
 
     return $response->withStatus(201);
   }

@@ -87,7 +87,10 @@ return [
         'storage' => [
             'name' => 'toiletevolution.appspot.com'
         ],
-        
+
+        'redis' => [
+            'host' => 'redis://<username>:<password>@redis-13431.c1.asia-northeast1-1.gce.cloud.redislabs.com:13431' // PLEASE CHANGE URI
+        ],
     ],
 ];
 ```

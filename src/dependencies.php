@@ -33,8 +33,11 @@ $container['session'] = function($container) {
   return new \RKA\Session();
 };
 
-$container[Memcached::class] = function($container) {
-  return new Memcached;
+$container[Redis::class] = function($container) {
+  $redis = new Redis();
+  $redis->connect($container->get('settings')['redis']['host'], $container->get('settings')['redis']['port']);
+  $redis->auth(['pass' => $container->get('settings')['redis']['password']]);
+  return $redis;
 };
 
 $container['UserStore'] = function($container)
@@ -44,7 +47,7 @@ $container['UserStore'] = function($container)
 
 $container[User::class] = function($container)
 {
-  return new User($container->get('UserStore'), $container->get(Memcached::class));
+  return new User($container->get('UserStore'), $container->get(Redis::class));
 };
 
 $container['DeviceStore'] = function($container)
@@ -54,7 +57,7 @@ $container['DeviceStore'] = function($container)
 
 $container[Device::class] = function($container)
 {
-    return new Device($container->get('DeviceStore'), $container->get(Memcached::class));
+    return new Device($container->get('DeviceStore'), $container->get(Redis::class));
 };
 
 //$container[OAuthFactory::class] = function($container)
