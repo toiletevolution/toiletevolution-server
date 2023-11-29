@@ -1,5 +1,5 @@
 application: toiletevolution
-version: 1
+version: 2
 runtime: php82
 module: default
 
