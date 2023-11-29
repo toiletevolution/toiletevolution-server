@@ -14,7 +14,7 @@
     "public/scripts/**/*",
     "public/styles/**/*",
     "public/docs/**/*",
-    "public/index.php",
+    "index.php",
     "public/manifest.json",
     "public/*.js",
     "app.yml",
