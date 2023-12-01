@@ -7,8 +7,27 @@ use ToiletEvolution\Services\UserService;
 use ToiletEvolution\Services\DeviceService;
 use ToiletEvolution\Models\User;
 use ToiletEvolution\Models\Device;
+use ToiletEvolution\Services\DeviceValuesService;
 
 $container = $app->getContainer();
+
+// Environment Settings
+if ($_SERVER['SERVER_NAME'] == 'localhost') {
+  ini_set('session.save_handler', 'files');
+  ini_set('session.save_path', null);
+  $container[DeviceValuesService::class] = function($container) {
+    $impl = new ToiletEvolution\Services\DeviceValuesServiceLocalImpl($container->get('settings')['storage']['name']);
+    $impl->setRoot(dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'localstorage');
+    return $impl;
+  };
+} else {
+  session_set_save_handler(new Google\AppEngine\Ext\Session\MemcacheSessionHandler(), true);
+  $storage = new Google\Cloud\Storage\StorageClient();
+  $storage->registerStreamWrapper();
+  $container[DeviceValuesService::class] = function($container) {
+    return new ToiletEvolution\Services\DeviceValuesServiceGsImpl($container->get('settings')['storage']['name']);
+  };
+}
 
 // monolog
 $container['logger'] = function ($c)

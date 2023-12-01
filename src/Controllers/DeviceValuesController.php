@@ -3,23 +3,25 @@ namespace ToiletEvolution\Controllers;
 
 use Interop\Container\ContainerInterface;
 use Carbon\Carbon;
+use ToiletEvolution\Services\DeviceValuesService;
 
 class DeviceValuesController
 {
   protected $ci;
   private $redis;
+  private $deviceValuesService;
 
   public function __construct(ContainerInterface $ci)
   {
     $this->ci = $ci;
     $this->redis = $this->ci->get(\Redis::class);
+    $this->deviceValuesService = $this->ci->get(DeviceValuesService::class);
   }
 
   public function get($request, $response, $args)
   {
     $id = $args['id'];
-    $bucketName = $this->ci->get('settings')['storage']['name'];
-    $fileName = "gs://{$bucketName}/${id}.json";
+    $fileName = $this->deviceValuesService->getFileName($id);
 
     $cache = $this->redis->get($fileName);
     if ($cache === false) {
@@ -49,8 +51,7 @@ class DeviceValuesController
   public function add($request, $response, $args)
   {
     $id = $args['id'];
-    $bucketName = $this->ci->get('settings')['storage']['name'];
-    $fileName = "gs://{$bucketName}/${id}.json";
+    $fileName = $this->deviceValuesService->getFileName($id);
     $cacheCount = 0;
 
     $cache = $this->redis->get($fileName);
