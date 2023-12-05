@@ -1,4 +1,7 @@
 <?php
+use Slim\Factory\AppFactory;
+use DI\Container;
+
 if (PHP_SAPI == 'cli-server') {
     // To help the built-in PHP dev server, check if the request was actually for
     // something which should probably be served as a static file
@@ -10,20 +13,25 @@ if (PHP_SAPI == 'cli-server') {
 
 require __DIR__ . '/vendor/autoload.php';
 
-// session_start();
-
 // Instantiate the app
 $settings = require __DIR__ . '/src/settings.php';
-$app = new \Slim\App($settings);
+$container = new Container();
+$container->set('settings', $settings['settings']);
 
 // Set up dependencies
-require __DIR__ . '/src/dependencies.php';
+$dependencies = require __DIR__ . '/src/dependencies.php';
+$container = $dependencies($container);
+
+AppFactory::setContainer($container);
+$app = AppFactory::create();
 
 // Register middleware
-require __DIR__ . '/src/middleware.php';
+$middleware = require __DIR__ . '/src/middleware.php';
+$middleware($app);
 
 // Register routes
-require __DIR__ . '/src/routes.php';
+$routes = require __DIR__ . '/src/routes.php';
+$routes($app);
 
 // Run app
 $app->run();

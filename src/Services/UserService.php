@@ -1,8 +1,11 @@
 <?php
 namespace ToiletEvolution\Services;
 
+use ToiletEvolution\Models\User;
+
 class UserService
 {
+  private User $userModel;
 
   public function __construct($userModel)
   {
@@ -26,7 +29,7 @@ class UserService
     $user->oauth_token = $accessToken;
 
     $this->userModel->save($user);
-    
+
     return $user;
   }
 }

@@ -1,29 +1,34 @@
 <?php
 namespace ToiletEvolution\Controllers;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use ToiletEvolution\Renderer\JsonRenderer;
 
 class UsersController
 {
-  protected $ci;
+  protected ContainerInterface $ci;
+  private JsonRenderer $renderer;
 
   public function __construct(ContainerInterface $ci)
   {
     $this->ci = $ci;
+    $this->renderer = new JsonRenderer();
   }
 
-  public function current($request, $response, $args)
+  public function current(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
   {
     $user = $this->ci->get('session')->get('current_user');
     if(empty($user)) {
       return $response->withStatus(404);
     }
 
-    return $response->withJson([
+    return $this->renderer->json($response, [
       'name'   => $user->name,
       'email'  => $user->email,
       'avatar' => $user->avatar,
-    ]);
+    ])->withStatus(200);
   }
 
 }

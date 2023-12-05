@@ -1,10 +1,13 @@
 <?php
 namespace ToiletEvolution\Services;
 
+use ToiletEvolution\Models\Device;
+
 class DeviceService
 {
+  private Device $model;
 
-  public function __construct($model)
+  public function __construct(Device $model)
   {
     $this->model = $model;
   }

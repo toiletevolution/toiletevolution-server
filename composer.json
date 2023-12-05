@@ -12,20 +12,23 @@
     ],
     "require": {
         "php": ">=8.2.0",
-        "slim/slim": "^3.1",
+        "slim/slim": "^4.12",
         "slim/php-view": "^2.0",
-        "monolog/monolog": "^1.17",
+        "monolog/monolog": "^3.5",
         "tomwalder/php-gds": "^5.1",
-        "tuupola/slim-basic-auth": "^2.0",
+        "tuupola/slim-basic-auth": "^3.3",
         "nesbot/carbon": "^1.21",
         "league/oauth2-client": "2.7.0",
         "league/oauth2-google": "4.0.1",
-        "akrabat/rka-slim-session-middleware": "2.0.0-RC1",
+        "akrabat/rka-slim-session-middleware": "^3.0",
         "slim/csrf": "^0.7.0",
         "aurmil/slim3-csrf-utilities": "^1.0",
         "justinrainbow/json-schema": "^5.2.12",
         "netresearch/jsonmapper": "^4.2",
-        "google/appengine-php-sdk": "2.2.0"
+        "google/appengine-php-sdk": "2.2.0",
+        "slim/psr7": "^1.6",
+        "php-di/php-di": "^7.0",
+        "google/cloud-storage": "^1.35"
     },
     "autoload": {
         "psr-4": {

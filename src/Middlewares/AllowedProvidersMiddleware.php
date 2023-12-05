@@ -1,6 +1,12 @@
 <?php
 namespace ToiletEvolution\Middlewares;
 
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Psr\Http\Message\ResponseInterface;
+use Slim\Psr7\Response;
+use Slim\Routing\RouteContext;
+
 class AllowedProvidersMiddleware
 {
   private $providers;
@@ -16,16 +22,17 @@ class AllowedProvidersMiddleware
   /**
    * AllowedProviders middleware invokable class
    *
-   * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
-   * @param  \Psr\Http\Message\ResponseInterface      $response PSR7 response
-   * @param  callable                                 $next     Next middleware
+   * @param Request $request PSR7 request
+   * @param RequestHandler $handler PSR-15 request handler
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return ResponseInterface
    */
-  public function __invoke($request, $response, $next)
+  public function __invoke(Request $request, RequestHandler $handler): ResponseInterface
   {
-    $route = $request->getAttribute('route');
+    $routeContext = RouteContext::fromRequest($request);
+    $route = $routeContext->getRoute();
     $provider = $route->getArgument('provider');
+    $response = new Response();
 
     if(!in_array($provider, $this->providers))
     {
@@ -33,7 +40,7 @@ class AllowedProvidersMiddleware
     }
     else
     {
-      $response = $next($request, $response);
+      $response = $handler->handle($request);
     }
 
     return $response;

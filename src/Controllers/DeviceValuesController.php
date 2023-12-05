@@ -1,24 +1,29 @@
 <?php
 namespace ToiletEvolution\Controllers;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use ToiletEvolution\Renderer\JsonRenderer;
 use Carbon\Carbon;
 use ToiletEvolution\Services\DeviceValuesService;
 
 class DeviceValuesController
 {
-  protected $ci;
+  protected ContainerInterface $ci;
   private $redis;
-  private $deviceValuesService;
+  private DeviceValuesService $deviceValuesService;
+  private JsonRenderer $renderer;
 
   public function __construct(ContainerInterface $ci)
   {
     $this->ci = $ci;
     $this->redis = $this->ci->get(\Redis::class);
     $this->deviceValuesService = $this->ci->get(DeviceValuesService::class);
+    $this->renderer = new JsonRenderer();
   }
 
-  public function get($request, $response, $args)
+  public function get(ServerRequestInterface $request, ResponseInterface $response, array $args)
   {
     $id = $args['id'];
     $fileName = $this->deviceValuesService->getFileName($id);
@@ -45,10 +50,10 @@ class DeviceValuesController
       return $date->gt($expired);
     }));
 
-    return $response->withJson($filtered, empty($filtered)?204:200);
+    return $this->renderer->json($response, $filtered)->withStatus(empty($filtered)?204:200);
   }
 
-  public function add($request, $response, $args)
+  public function add(ServerRequestInterface $request, ResponseInterface $response, array $args)
   {
     $id = $args['id'];
     $fileName = $this->deviceValuesService->getFileName($id);
