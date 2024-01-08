@@ -9,6 +9,8 @@ use ToiletEvolution\Models\User;
 use ToiletEvolution\Models\Device;
 use ToiletEvolution\Services\DeviceValuesService;
 use DI\Container;
+use Google\Cloud\Datastore\DatastoreClient;
+use Google\Cloud\Datastore\DatastoreSessionHandler;
 
 return function (Container $container) {
 
@@ -22,7 +24,11 @@ return function (Container $container) {
       return $impl;
     });
   } else {
-//    session_set_save_handler(new Google\AppEngine\Ext\Session\MemcacheSessionHandler(), true);
+    $datastore = new DatastoreClient();
+    $handler = new DatastoreSessionHandler($datastore);
+    session_set_save_handler($handler, true);
+    session_save_path('sessions');
+
     $storage = new Google\Cloud\Storage\StorageClient();
     $storage->registerStreamWrapper();
     $container->set(DeviceValuesService::class, function($container) {
