@@ -17,7 +17,7 @@
         "monolog/monolog": "^3.5",
         "tomwalder/php-gds": "^5.1",
         "tuupola/slim-basic-auth": "^3.3",
-        "nesbot/carbon": "^1.21",
+        "nesbot/carbon": "^2.72",
         "league/oauth2-client": "2.7.0",
         "league/oauth2-google": "4.0.1",
         "akrabat/rka-slim-session-middleware": "^3.0",
