@@ -22,7 +22,7 @@ return function (Container $container) {
       return $impl;
     });
   } else {
-    session_set_save_handler(new Google\AppEngine\Ext\Session\MemcacheSessionHandler(), true);
+//    session_set_save_handler(new Google\AppEngine\Ext\Session\MemcacheSessionHandler(), true);
     $storage = new Google\Cloud\Storage\StorageClient();
     $storage->registerStreamWrapper();
     $container->set(DeviceValuesService::class, function($container) {

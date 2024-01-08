@@ -4,9 +4,10 @@ namespace ToiletEvolution\Middlewares;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Slim\Psr7\Response;
 
-class RequireLoginMiddleware
+class RequireLoginMiddleware implements MiddlewareInterface
 {
   private $redirectIfNotLogin;
   private $session;
@@ -29,7 +30,7 @@ class RequireLoginMiddleware
    *
    * @return Psr\Http\Message\ResponseInterface
    */
-  public function __invoke(Request $request, RequestHandler $handler): ResponseInterface
+  public function process(Request $request, RequestHandler $handler): ResponseInterface
   {
     $response = new Response();
     if(empty($this->session->get('current_user')))

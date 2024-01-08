@@ -59,7 +59,7 @@ final class AllowedProvidersMiddlewareTest extends TestCase
     $request = $request->withAttribute(RouteContext::ROUTING_RESULTS, $this->createMock(RoutingResults::class));
     $route->setArgument('provider', 'google');
 
-    $results = $this->target->__invoke($request, $this->createRequestHandler());
+    $results = $this->target->process($request, $this->createRequestHandler());
     $this->assertTrue($results->request instanceof ServerRequest);
   }
 
@@ -71,7 +71,7 @@ final class AllowedProvidersMiddlewareTest extends TestCase
     $request = $request->withAttribute(RouteContext::ROUTING_RESULTS, $this->createMock(RoutingResults::class));
     $route->setArgument('provider', 'oauth2');
 
-    $results = $this->target->__invoke($request, $this->createRequestHandler());
+    $results = $this->target->process($request, $this->createRequestHandler());
     $this->assertThat($results, hasStatus(404));
   }
 }

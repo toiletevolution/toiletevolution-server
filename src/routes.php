@@ -2,18 +2,21 @@
 // Routes
 declare(strict_types=1);
 
-use App\Handler\HomePageHandler;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
 return function (App $app) {
+  $sessionMiddleware = new \RKA\SessionMiddleware(['name' => 'ToiletEvolution']);
+
   //
   // For Public
   //
   $app->get('/api/devices', '\ToiletEvolution\Controllers\DevicesController:index')->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
   $app->get('/api/devices/{id}', '\ToiletEvolution\Controllers\DevicesController:get')->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
   $app->get('/api/devices/{id}/values', '\ToiletEvolution\Controllers\DeviceValuesController:get')->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
-  $app->get('/api/user/current', '\ToiletEvolution\Controllers\UsersController:current')->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
+  $app->get('/api/user/current', '\ToiletEvolution\Controllers\UsersController:current')
+    ->add($sessionMiddleware)
+    ->add(new \ToiletEvolution\Middlewares\PublicApiMiddleware());
 
   //
   // For Registered Devices
@@ -36,7 +39,9 @@ return function (App $app) {
     $group->get('/devices/{id}', '\ToiletEvolution\Controllers\Admin\DevicesController:get');
     $group->post('/device', '\ToiletEvolution\Controllers\Admin\DevicesController:add');
     $group->delete('/devices/{id}', '\ToiletEvolution\Controllers\Admin\DevicesController:delete');
-  })->add(new \ToiletEvolution\Middlewares\RequireLoginMiddleware('/', $app->getContainer()->get('session')));;
+  })
+  ->add(new \ToiletEvolution\Middlewares\RequireLoginMiddleware('/', $app->getContainer()->get('session')))
+  ->add($sessionMiddleware);
 
   //
   // For OAuth
@@ -87,5 +92,7 @@ return function (App $app) {
       }
     });
 
-  })->add(new \ToiletEvolution\Middlewares\AllowedProvidersMiddleware($app->getContainer()->get('oAuthProviders')));
+  })
+  ->add($sessionMiddleware)
+  ->add(new \ToiletEvolution\Middlewares\AllowedProvidersMiddleware($app->getContainer()->get('oAuthProviders')));
 };

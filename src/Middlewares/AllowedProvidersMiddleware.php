@@ -4,10 +4,11 @@ namespace ToiletEvolution\Middlewares;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Slim\Psr7\Response;
 use Slim\Routing\RouteContext;
 
-class AllowedProvidersMiddleware
+class AllowedProvidersMiddleware implements MiddlewareInterface
 {
   private $providers;
 
@@ -27,7 +28,7 @@ class AllowedProvidersMiddleware
    *
    * @return ResponseInterface
    */
-  public function __invoke(Request $request, RequestHandler $handler): ResponseInterface
+  public function process(Request $request, RequestHandler $handler): ResponseInterface
   {
     $routeContext = RouteContext::fromRequest($request);
     $route = $routeContext->getRoute();

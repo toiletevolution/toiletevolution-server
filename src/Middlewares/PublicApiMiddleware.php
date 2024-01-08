@@ -3,9 +3,10 @@ namespace ToiletEvolution\Middlewares;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Psr\Http\Server\MiddlewareInterface;
 use Slim\Psr7\Response;
 
-class PublicApiMiddleware
+class PublicApiMiddleware implements MiddlewareInterface
 {
   /**
    * Public api middleware invokable class
@@ -15,7 +16,7 @@ class PublicApiMiddleware
    *
    * @return Slim\Psr7\Response
    */
-  public function __invoke(Request $request, RequestHandler $handler): Response
+  public function process(Request $request, RequestHandler $handler): Response
   {
     $response = $handler->handle($request);
     return $response

@@ -66,7 +66,7 @@ final class RequireLoginMiddlewareTest extends TestCase
     $user = new \stdClass;
     $this->session->expects($this->once())->method('get')->with($this->equalTo('current_user'))->willReturn($user);
 
-    $results = $this->target->__invoke($request, $this->createRequestHandler());
+    $results = $this->target->process($request, $this->createRequestHandler());
     $this->assertTrue($results->request instanceof ServerRequest);
   }
 
@@ -77,7 +77,7 @@ final class RequireLoginMiddlewareTest extends TestCase
     $route->setArgument('provider', 'oauth2');
     $this->session->expects($this->once())->method('get')->with($this->equalTo('current_user'))->willReturn(null);
 
-    $results = $this->target->__invoke($request, $this->createRequestHandler());
+    $results = $this->target->process($request, $this->createRequestHandler());
     $this->assertThat($results, hasStatus(302));
     $this->assertThat($results, hasHeader('Location', 'https://toiletevolution.space'));
   }
