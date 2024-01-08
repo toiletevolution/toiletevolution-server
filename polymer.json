@@ -9,7 +9,6 @@
   ],
   "sources": [
     "src/**/*",
-    "vendor/**/*",
     "public/images/**/*",
     "public/scripts/**/*",
     "public/styles/**/*",
@@ -18,7 +17,9 @@
     "public/manifest.json",
     "public/*.js",
     "app.yml",
-    "php.ini"
+    "php.ini",
+    "composer.json",
+    "composer.lock"
   ],
   "extraDependencies": [
     "node_modules/@webcomponents/webcomponentsjs/*.js",
