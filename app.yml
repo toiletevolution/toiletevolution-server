@@ -1,17 +1,4 @@
-application: toiletevolution
-version: 2
 runtime: php82
-module: default
-
-skip_files:
-- ^(.*/)?composer\.(phar|lock|json)$
-- logs
-- ^\.(bowerrc|editorconfig|gitignore)
-- bower.json
-- package.json
-- polymer.json
-  tests
-  .git
 
 handlers:
 - url: /favicon\.ico
