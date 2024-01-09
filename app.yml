@@ -11,6 +11,9 @@ handlers:
 - url: /images
   static_dir: public/images
 
+- url: /zxcvbn/dist
+  static_dir: public/scripts/zxcvbn/dist
+
 - url: /(.*).(html|js|json|css)
   static_files: public/\1.\2
   upload: public/(.*)\.(html|js|json|css)

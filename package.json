@@ -52,6 +52,7 @@
     "@polymer/paper-input": "^3.0.1",
     "@polymer/paper-item": "^3.0.0",
     "@polymer/paper-listbox": "^3.0.0",
+    "@polymer/paper-progress": "^3.0.1",
     "@polymer/paper-spinner": "^3.0.0",
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/paper-tabs": "^3.0.0",
@@ -60,7 +61,8 @@
     "@polymer/polymer": "^3.0.0",
     "@webcomponents/webcomponentsjs": "^2.2.7",
     "moment": "^2.24.0",
-    "polymer-toggle-icon": "^3.0.0"
+    "polymer-toggle-icon": "^3.0.0",
+    "web-animations-js": "^2.3.2"
   },
   "devDependencies": {
     "bower": "^1.8.8",

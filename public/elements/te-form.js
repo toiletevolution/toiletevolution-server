@@ -78,8 +78,8 @@ Polymer({
               <span>センサー{{index}}</span>
               <div class="flex-horizontal">
                 <paper-input id="threshold_value_{{index}}" required="" auto-validate="" error-message="必ず入力してください"></paper-input>
-                <paper-dropdown-menu label="空室判定条件" id="threshold_condition_{{index}}" required="">
-                  <paper-listbox class="dropdown-content">
+                <paper-dropdown-menu label="空室判定条件" id="threshold_condition_{{index}}" required="" no-animations="true">
+                  <paper-listbox slot="dropdown-content">
                     <paper-item>より大きい場合は空室</paper-item>
                     <paper-item>と等しい場合は空室</paper-item>
                     <paper-item>より小さい場合は空室</paper-item>

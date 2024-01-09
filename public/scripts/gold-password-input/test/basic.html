@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+  <title>gold-password-input tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <script type="module" src="../gold-password-input.js"></script>
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <gold-password-input></gold-password-input>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="strength-meter">
+    <template>
+      <gold-password-input strength-meter></gold-password-input>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="custom-strength-meter">
+    <template>
+      <gold-password-input 
+      strength-meter
+      strength-meter-labels='{
+        "Label": "Symbol", 
+        "None": "Nature", 
+        "VeryWeak": "VolksWagen", 
+        "Weak": "Winner", 
+        "Medium": "Meow", 
+        "Strong": "Superman", 
+        "VeryStrong": "VerSus"}'>
+      </gold-password-input>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="validation">
+    <template>
+      <gold-password-input-validator
+        pattern="[a-zA-Z0-9]*">
+      </gold-password-input-validator>
+      <gold-password-input 
+        auto-validate required
+        validator="gold-password-input-validator"
+        error-message="Invalid password: letters and digits only">
+      </gold-password-input>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="strength-meter-validation">
+    <template>
+      <gold-password-input-validator
+        pattern="[a-zA-Z0-9]*">
+      </gold-password-input-validator>
+      <gold-password-input 
+        strength-meter
+        auto-validate required
+        validator="gold-password-input-validator"
+        error-message="Invalid password: letters and digits only">
+      </gold-password-input>
+    </template>
+  </test-fixture>
+
+  <script type="module">
+import '../gold-password-input.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+
+suite('basic', function() {
+
+  test('input doesn\'t show any addon', function() {
+    var input = fixture('basic');
+    input.value='1234';
+    forceXIfStamp(input);
+
+    var container = dom(input.root).querySelector('paper-input-container');
+    assert.ok(container, 'paper-input-container exists');
+    assert.isFalse(container.invalid);
+
+    var error = dom(input.root).querySelector('paper-input-error');
+    assert.notOk(error, 'paper-input-error exists');
+
+    var strengthMeter = dom(input.root).querySelector('gold-password-input-strength-meter');
+    assert.notOk(error, 'gold-password-input-strength-meter exists');
+  });
+
+  // TODO PG: finish the tests starting from here... 
+//   test('valid input does not show error', function() {
+//     var input = fixture('basic');
+//     input.value='batman@gotham.org';
+//     forceXIfStamp(input);
+
+//     var container = Polymer.dom(input.root).querySelector('paper-input-container');
+//     assert.ok(container, 'paper-input-container exists');
+//     assert.isFalse(container.invalid);
+
+//     var error = Polymer.dom(input.root).querySelector('paper-input-error');
+//     assert.ok(error, 'paper-input-error exists');
+//     assert.equal(getComputedStyle(error).visibility, 'hidden', 'error is visibility:hidden');
+//   });
+
+//   test('empty required input shows error on blur', function(done) {
+//     var input = fixture('basic');
+//     forceXIfStamp(input);
+
+//     var error = Polymer.dom(input.root).querySelector('paper-input-error');
+//     assert.ok(error, 'paper-input-error exists');
+
+//     assert.equal(getComputedStyle(error).visibility, 'hidden', 'error is visibility:hidden');
+
+//     input.addEventListener('blur', function(event) {
+//       assert(!input.focused, 'input is blurred');
+//       assert.notEqual(getComputedStyle(error).visibility, 'hidden', 'error is not visibility:hidden');
+//       done();
+//     });
+//     MockInteractions.focus(input);
+//     MockInteractions.blur(input);
+//   });
+
+});
+
+suite('strength-meter', function() {
+
+  // test('input doesn\'t show strength meter addon, but not error addon', function() {
+  //   var input = fixture('strength-meter');
+  //   //input.value='1234';
+  //   forceXIfStamp(input);
+
+  //   var container = Polymer.dom(input.root).querySelector('paper-input-container');
+  //   assert.ok(container, 'paper-input-container exists');
+  //   assert.isFalse(container.invalid);
+
+  //   var error = Polymer.dom(input.root).querySelector('paper-input-error');
+  //   assert.notOk(error, 'paper-input-error exists');
+  //   //assert.equal(getComputedStyle(error).visibility, 'hidden', 'error is visibility:hidden');
+
+  //   var strengthMeter = Polymer.dom(input.root).querySelector('gold-password-input-strength-meter');
+  //   assert.ok(strengthMeter, 'gold-password-input-strength-meter does not exists');
+  //   assert.equal(getComputedStyle(strengthMeter).visibility, 'visible', 'strength-meter is visibility:hidden');
+  // });
+
+});
+
+suite('validation', function() {
+
+});
+</script>
+
+</body>
+</html>

@@ -16,63 +16,74 @@ Custom property | Description | Default
 `--gold-password-input-strength-meter-verystrong-color` | The text color for a strength value of Very Strong  | `--paper-green-700`
 `--gold-password-input-strength-meter` | Mixin applied to the element | `{}`
 */
+/* TODO PG: remove this ASAP when https://github.com/PolymerElements/paper-tooltip/issues/121 is fixed */
 /*
   FIXME(polymer-modulizer): the above comments were extracted
   from HTML and may be out of place here. Review them and
   then delete this comment!
 */
 import '@polymer/polymer/polymer-legacy.js';
-import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 
-import '@polymer/iron-icon/iron-icon.js';
+import { PaperInputAddonBehavior } from '@polymer/paper-input/paper-input-addon-behavior.js';
 import '@polymer/paper-styles/color.js';
-import {PaperInputAddonBehavior} from '@polymer/paper-input/paper-input-addon-behavior.js';
+import '@polymer/paper-progress/paper-progress.js';
 import '@polymer/paper-tooltip/paper-tooltip.js';
 import './gold-password-input-icons.js';
-var isZxcvbnLoaded = false;
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import 'web-animations-js/web-animations-next-lite.min.js';
+const $_documentContainer = document.createElement('template');
 
-Polymer({
-  _template: html`
+$_documentContainer.innerHTML = `<dom-module id="gold-password-input-strength-meter">
+  <template>
     <style>
       :host {
-        float: right;
+        outline: inherit;
 
         @apply --paper-font-caption;
         @apply --gold-password-input-strength-meter;
       }
 
-      :host-context([dir="rtl"]) {
-        float: left;
-      }
       /* FIXME PG: suppress when paper-input-container has reflectToAttribute for invalid... cf. ( https://github.com/PolymerElements/paper-input/pull/258 ) */
-/*
+      /*
       :host-context([invalid]) {
         visibility: hidden;
       };
-*/
-      :host([invalid]) {
+      */
+      :host([invalid]), :host([warning]) {
         visibility: hidden;
       };
 
       /* FIXME PG: remove !important used as current workaround before getting the proper explanation... cf. ( https://github.com/Polymer/polymer/issues/3059 )*/
       .None {
-        color: var(--gold-password-input-strength-meter-none-color, --paper-grey-700) !important;
+        color: var(--gold-password-input-strength-meter-none-color, var(--paper-grey-700)) !important;
+        --paper-progress-active-color: var(--gold-password-input-strength-meter-none-color, var(--paper-grey-700)) !important;
       }
       .VeryWeak {
-        color: var(--gold-password-input-strength-meter-veryweak-color, --paper-red-700) !important;
+        color: var(--gold-password-input-strength-meter-veryweak-color, var(--paper-red-700)) !important;
+        --paper-progress-active-color: var(--gold-password-input-strength-meter-veryweak-color, var(--paper-red-700)) !important;
       }
       .Weak {
-        color: var(--gold-password-input-strength-meter-weak-color, --paper-orange-700) !important;
+        color: var(--gold-password-input-strength-meter-weak-color, var(--paper-orange-700)) !important;
+        --paper-progress-active-color: var(--gold-password-input-strength-meter-weak-color, var(--paper-orange-700)) !important;
       }
       .Medium {
-        color: var(--gold-password-input-strength-meter-medium-color, --paper-yellow-700) !important;
+        color: var(--gold-password-input-strength-meter-medium-color, var(--paper-yellow-700)) !important;
+        --paper-progress-active-color: var(--gold-password-input-strength-meter-medium-color, var(--paper-yellow-700)) !important;
       }
       .Strong {
-        color: var(--gold-password-input-strength-meter-strong-color, --paper-blue-700) !important;
+        color: var(--gold-password-input-strength-meter-strong-color, var(--paper-blue-700)) !important;
+        --paper-progress-active-color: var(--gold-password-input-strength-meter-strong-color, var(--paper-blue-700)) !important;
       }
       .VeryStrong {
-        color: var(--gold-password-input-strength-meter-verystrong-color, --paper-green-700) !important;
+        color: var(--gold-password-input-strength-meter-verystrong-color, var(--paper-green-700)) !important;
+        --paper-progress-active-color: var(--gold-password-input-strength-meter-verystrong-color, var(--paper-green-700)) !important;
+      }
+
+      #strengthProgress {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        top: -2.2px;
       }
 
       #strengthLabel iron-icon {
@@ -88,21 +99,32 @@ Polymer({
       };
     </style>
 
-    <span id="strengthLabel">
+    <paper-progress id="strengthProgress" hidden\$="[[_computeShowProgress(useProgress,_strengthMeterScore)]]" value="[[_computeProgress(_strengthMeterScore)]]" class\$="[[_strengthMeterScoreLabel]]">
+    </paper-progress>
+    <span id="strengthLabel" hidden\$="[[noLabel]]">
+      <iron-icon id="strengthTooltipIcon" icon="gold-password-input:info" hidden\$="[[disableTooltip]]"></iron-icon>
       [[strengthMeterLabels.Label]]:
-      <span class\$="[[_strengthMeterScore]]">[[_computeStrengthMeterLabel(_strengthMeterScore)]]</span>
-      <iron-icon icon="gold-password-input:info"></iron-icon>
+      <span class\$="[[_strengthMeterScoreLabel]]">[[_computeStrengthMeterLabel(_strengthMeterScoreLabel)]]</span>
+      <paper-tooltip id="strengthTooltip" for="strengthTooltipIcon" position="top" offset="4" fit-to-visible-bounds="">
+        <div class="warning">
+          <span><b>Warning: </b>[[_strengthMeterFeedback.warning]]</span>
+        </div>
+        <div class="suggestions">
+          <span><b>Suggestions: </b>[[_strengthMeterFeedback.suggestions]]</span>
+        </div>
+      </paper-tooltip>
     </span>
-    <paper-tooltip id="strengthTooltip" for="strengthLabel" position="bottom" offset="14">
-      <div class="warning">
-        <span><b>Warning: </b>[[_strengthMeterFeedback.warning]]</span>
-      </div>
-      <div class="suggestions">
-        <span><b>Suggestions: </b>[[_strengthMeterFeedback.suggestions]]</span>
-      </div>
-    </paper-tooltip>
-`,
 
+  </template>
+  <!-- TODO PG: remove this ASAP when https://github.com/PolymerElements/paper-tooltip/issues/121 is fixed -->
+  
+  
+</dom-module>`;
+
+document.head.appendChild($_documentContainer.content);
+var isZxcvbnLoaded = false;
+
+Polymer({
   is: 'gold-password-input-strength-meter',
 
   behaviors: [
@@ -135,9 +157,9 @@ Polymer({
       type: Boolean
     },
     /**
-     * Contains the current score value of the input.
+     * Contains the current label score value of the input.
      */
-    _strengthMeterScore: {
+    _strengthMeterScoreLabel: {
       type: String,
       value: 'None'
     },
@@ -150,7 +172,37 @@ Polymer({
         warning: 'None',
         suggestions: 'None'};
       }
-    }
+    },
+    /**
+     * Contains the current score value of the input.
+     */
+    _strengthMeterScore: {
+      type: Number,
+      value: 0
+    },
+    /**
+    * Min strength meter score label (used on validate).
+    */
+    minStrengthMeterScoreLabel: String,
+    /**
+    * Controls wether the tooltip is rendered or not.
+    */
+    disableTooltip: Boolean,
+    /**
+    * Controls whether to use labels to show the strength result.
+    */
+    noLabel: Boolean,
+    /**
+    * Controls whether to use a progress bar to show the strength result.
+    */
+    useProgress: Boolean,
+    /**
+     * True if a warning is showing.
+     */
+    warning: {
+      reflectToAttribute: true,
+      type: Boolean
+    },
   },
 
   ready: function() {
@@ -178,7 +230,8 @@ Polymer({
 
     state.value = state.value || '';
     if (state.value === '') {
-      this._strengthMeterScore = 'None';
+      this._strengthMeterScoreLabel = 'None';
+      this._strengthMeterScore = 0;
       this.set('_strengthMeterFeedback.warning', 'None');
       this.set('_strengthMeterFeedback.suggestions', 'None');
       return;
@@ -191,25 +244,28 @@ Polymer({
     // Use zxcvbn to evaluate the strength of the password.
     var result = zxcvbn(state.value);
 
+    // Current score
+    this._strengthMeterScore = result.score + 1;
+
     // update the zxcvbn score property
-    switch(result.score) {
-      case 0:
-        this._strengthMeterScore = 'VeryWeak';
-        break;
+    switch(this._strengthMeterScore) {
       case 1:
-        this._strengthMeterScore = 'Weak';
+        this._strengthMeterScoreLabel = 'VeryWeak';
         break;
       case 2:
-        this._strengthMeterScore = 'Medium';
+        this._strengthMeterScoreLabel = 'Weak';
         break;
       case 3:
-        this._strengthMeterScore = 'Strong';
+        this._strengthMeterScoreLabel = 'Medium';
         break;
       case 4:
-        this._strengthMeterScore = 'VeryStrong';
+        this._strengthMeterScoreLabel = 'Strong';
+        break;
+      case 5:
+        this._strengthMeterScoreLabel = 'VeryStrong';
         break;
       default:
-        this._strengthMeterScore = 'None';
+        this._strengthMeterScoreLabel = 'None';
     }
 
     // update the user feedback if any
@@ -222,7 +278,53 @@ Polymer({
     }
   },
 
-  _computeStrengthMeterLabel: function(_strengthMeterScore) {
-    return this.strengthMeterLabels[_strengthMeterScore];
+  _computeStrengthMeterLabel: function(_strengthMeterScoreLabel) {
+    return this.strengthMeterLabels[_strengthMeterScoreLabel];
+  },
+
+  _getStrengthMeterFromLabel(strengthMeterLabel) {
+    return Object.keys(this.strengthMeterLabels).find(strengthMeterKey => this.strengthMeterLabels[strengthMeterKey] === strengthMeterLabel);
+  },
+
+  _getStrengthMeterScoreFromStrengthMeter(strengthMeter) {
+   switch(strengthMeter) {
+      case 'VeryWeak':
+        return 1;
+        break;
+      case 'Weak':
+        return 2;
+        break;
+      case 'Medium':
+        return 3;
+        break;
+      case 'Strong':
+        return 4;
+        break;
+      case 'VeryStrong':
+        return 5;
+        break;
+      default:
+        return 0;
+    }
+  },
+
+  _computeShowProgress: function(useProgress, score) {
+    return !(useProgress && (score !== 0));
+  },
+
+  _computeProgress: function(score) {
+    return score * 20;
+  },
+
+  validate: function() {
+    if (this.minStrengthMeterScoreLabel) {
+      const minStrengthMeter = this._getStrengthMeterFromLabel(this.minStrengthMeterScoreLabel);
+      const minStrengthMeterScore = this._getStrengthMeterScoreFromStrengthMeter(minStrengthMeter);
+      if (this._strengthMeterScore >= minStrengthMeterScore) {
+        return true;
+      }
+      return false;
+    }
+    return true;
   }
 });
