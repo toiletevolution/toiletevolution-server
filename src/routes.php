@@ -24,10 +24,6 @@ return function (App $app) {
   $app->post('/api/devices/{id}/values', '\ToiletEvolution\Controllers\DeviceValuesController:add')
       ->add(new \Tuupola\Middleware\HttpBasicAuthentication([
           "authenticator" => new ToiletEvolution\Middlewares\HttpBasicAuthentication\DeviceAuthenticator($app->getContainer()->get('DeviceStore')),
-          "before" => function($request, $response, $arguments) {
-            $id = $arguments('id');
-            return $id === $arguments['user'];
-          },
           "secure" => false
         ]));
 
