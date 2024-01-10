@@ -60,9 +60,10 @@ Polymer({
         </template>
       </div>
       <div>
-        <google-map map="{{map}}" latitude="[[device.latitude]]" longitude="[[device.longitude]]" zoom="17" api-key="">
-          <google-map-marker slot="google-map-marker" id="location" latitude="[[device.latitude]]" longitude="[[device.longitude]]"></google-map-marker>
-        </google-map>
+        <gmpx-api-loader key="YOUR_API_KEY"></gmpx-api-loader>
+        <gmp-map id="map" zoom="17" center="[[deviceLatLng(device)]]" map-id="DEMO_MAP_ID">
+          <gmp-advanced-marker id="location" position="[[deviceLatLng(device)]]"></gmp-advanced-marker>
+        </gmp-map>
       </div>
       <div>
         <ul>
@@ -104,6 +105,10 @@ Polymer({
       this._deviceIdChanged(this.deviceId);
       this.$.ajax_detail.generateRequest();
     }
+  },
+
+  deviceLatLng: function(device) {
+    return {lat: device.latitude, lng: device.longitude};
   },
 
   observers: [

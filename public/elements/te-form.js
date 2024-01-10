@@ -3,7 +3,6 @@ import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 import '../scripts/geo-location/geo-location.js';
 import '../scripts/gold-password-input/gold-password-input.js';
-import '../scripts/google-map/google-map.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import '@polymer/iron-form/iron-form.js';
@@ -29,7 +28,7 @@ Polymer({
         box-sizing: border-box;
         background-color: white;
       }
-      google-map {
+      gmp-map {
         height: 400px;
       }
       paper-input {
@@ -95,9 +94,10 @@ Polymer({
         <geo-location id="loc" latitude="{{lat}}" longitude="{{lng}}"></geo-location>
         <iron-label class="geo">
           設置場所
-          <google-map map="{{map}}" latitude="[[lat]]" longitude="[[lng]]" zoom="17" api-key="">
-            <google-map-marker slot="google-map-marker" id="location" latitude="[[lat]]" longitude="[[lng]]" draggable="true"></google-map-marker>
-          </google-map>
+          <gmpx-api-loader key="YOUR_API_KEY"></gmpx-api-loader>
+          <gmp-map id="map" zoom="17" map-id="DEMO_MAP_ID">
+            <gmp-advanced-marker id="location" gmpDraggable="true"></gmp-advanced-marker>
+          </gmp-map>
         </iron-label>
 
         <div class="buttons">
@@ -176,8 +176,8 @@ Polymer({
         password: this.password,
         thresholds: this.createThresholds(),
         location: {
-          latitude: this.$.location.latitude,
-          longitude: this.$.location.longitude
+          latitude: this.$.location.position.lat,
+          longitude: this.$.location.position.lng
         }
       });
       this.$.ajax.generateRequest();
@@ -215,6 +215,10 @@ Polymer({
     });
   },
 
+  changePosition: function(event) {
+    this.$.map.center = this.$.location.position = {lat: event.detail.latitude, lng: event.detail.longitude};
+  },
+
   ready: function() {
     this.$.ajax.headers = {
       "X-Requested-With": "XMLHttpRequest"
@@ -231,5 +235,6 @@ Polymer({
     this.addEventListener('password-changed', this.validatePassword);
     this.addEventListener('repass-changed', this.validatePassword);
     this.addEventListener('num_of_rooms-changed', this.changeRoomsArray);
+    this.addEventListener('geo-response', this.changePosition)
   }
 });
