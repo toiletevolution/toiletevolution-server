@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import {html} from '@polymer/polymer/lib/utils/html-tag.js';
-import '@google-web-components/google-chart/google-chart.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/paper-styles/paper-styles.js';
 import moment from 'moment';
@@ -19,7 +18,11 @@ Polymer({
     </style>
 
     <template is="dom-repeat" items="[[deviceThresholds]]" as="threshold" index-as="roomIndex">
-      <google-chart type="line" options="{{chartOption(roomIndex)}}" data="{{chartData(deviceValues, roomIndex, threshold)}}">
+      <google-chart
+        type="line"
+        cols="[{type: 'datetime', label: '日時'}, {type: 'number', label: '計測値'}, {type: 'number', label:'しきい値'}]"
+        options="[[chartOption(roomIndex)]]"
+        data="[[chartData(deviceValues, roomIndex, threshold)]]">
       </google-chart>
     </template>
     <iron-ajax id="ajax_values" url="{{urlValues}}" handle-as="json" method="GET" last-response="{{deviceValues}}" on-response="repeatGetValues"></iron-ajax>
@@ -59,7 +62,7 @@ Polymer({
   },
 
   chartData: function(values, roomIndex, threshold) {
-    var data = [[{type: 'datetime', label: '日時'}, {type: 'number', label: '計測値'}, {type: 'number', label:'しきい値'}]];
+    var data = [];
     (values || []).forEach(function(value){
       data.push([moment(value.created).toDate(), value.payload[roomIndex], parseFloat(threshold.value)]);
     });

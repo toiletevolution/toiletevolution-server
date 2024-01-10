@@ -22,8 +22,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@google-web-components/google-apis": "^3.0.1",
-    "@google-web-components/google-chart": "^3.0.4",
     "@polymer/app-layout": "^3.0.0",
     "@polymer/app-route": "^3.0.0",
     "@polymer/iron-ajax": "^3.0.0",
