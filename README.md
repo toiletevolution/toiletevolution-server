@@ -64,7 +64,7 @@ export APIKEY=GoogleのAPIキー
 ```
 
 `src/settings.php.default` ファイルをコピーして `src/settings.php` にして、以下の環境設定を変更してください。
-`oauth` の設定は、現時点ではGoogle+のみ有効となっています。
+`oauth` の設定は、現時点ではGoogleのみ有効となっています。
 
 ```php
 <?php
@@ -80,8 +80,7 @@ return [
         'oauth' => [
             'clientId'     => 'PLEASE SET YOUR CLIENT ID',
             'clientSecret' => 'PLEASE SET YOUR CLIENT SECRET',
-            'redirectUri'  => 'http://localhost:8888/auth/google/callback', // PLEASE CHANGE URI
-            'hostedDomain' => 'http://localhost:8888',                      // PLEASE CHANGE DOMAIN
+            'redirectUri'  => 'http://localhost:8888/auth/google/callback' // PLEASE CHANGE URI
         ],
         
         'storage' => [
@@ -156,4 +155,14 @@ $ $(gcloud beta emulators datastore env-unset)
 
 ```
 composer run-script t
+```
+
+### 新しいバージョンへのデプロイ
+
+バージョンが 2 の場合かつ、トラフィックを古いバージョンのままにするとき
+
+```
+npm run build
+cd ./tmp
+gcloud app deploy --project toiletevolution --version 2 --no-promote --appyaml=app.yml
 ```
