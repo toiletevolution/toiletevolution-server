@@ -1,6 +1,10 @@
 <?php
 // Application middleware
+declare(strict_types=1);
 
-// e.g: $app->add(new \Slim\Csrf\Guard);
+use Slim\App;
 
-$app->add(new \RKA\SessionMiddleware(['name' => 'ToiletEvolution']));
+return function (App $app) {
+  // e.g: $app->add(new \Slim\Csrf\Guard);
+  $app->addBodyParsingMiddleware();
+};

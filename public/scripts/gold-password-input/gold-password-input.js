@@ -11,7 +11,7 @@ It may include a Strength Meter based on [zxcvbn](https://github.com/dropbox/zxc
     <gold-password-input strength-meter></gold-password-input>
 
 ***Note**: You need to add the dependency to the `polymer.json` configuration file like follow:
-    
+
     "includeDependencies": [ "bower_components/zxcvbn/dist/zxcvbn.js" ]
 
 It may include an optional label, which by default is "Password".
@@ -21,6 +21,10 @@ It may include an optional label, which by default is "Password".
 It may include a reveal option to be able to show the plain text password with a toggle icon.
 
     <gold-password-input reveal></gold-password-input>
+
+The strength could be represented as string label (default), but also as a progress bar using the use-progress option.
+
+Eventually, one may also warn a user with Caps Lock ON detection.
 
 It may include an optional label configuration object.
 
@@ -73,55 +77,134 @@ style this element.
   then delete this comment!
 */
 import '@polymer/polymer/polymer-legacy.js';
-import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import {html} from '@polymer/polymer/lib/utils/html-tag.js';
+
 import '@polymer/iron-input/iron-input.js';
-import {IronFormElementBehavior} from '@polymer/iron-form-element-behavior/iron-form-element-behavior.js';
-import {PaperInputBehavior} from '@polymer/paper-input/paper-input-behavior.js';
+import { IronFormElementBehavior } from '@polymer/iron-form-element-behavior/iron-form-element-behavior.js';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import { PaperInputBehavior } from '@polymer/paper-input/paper-input-behavior.js';
 import '@polymer/paper-input/paper-input-container.js';
 import '@polymer/paper-input/paper-input-error.js';
 import 'polymer-toggle-icon/toggle-icon.js';
 import './gold-password-input-icons.js';
 import './gold-password-input-strength-meter.js';
+import './gold-password-input-warning.js';
 import './gold-password-input-validator.js';
-Polymer({
-  _template: html`
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { DomModule } from '@polymer/polymer/lib/elements/dom-module.js';
+import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { beforeNextRender } from '@polymer/polymer/lib/utils/render-status.js';
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<dom-module id="gold-password-input">
+  <template>
     <style>
       :host {
         display: block;
       }
 
+      /* TODO: This should be a dropdown */
+      span {
+        @apply --paper-font-subhead;
+        @apply --paper-input-container-input;
+      }
+
+      input {
+        @apply --layout-flex;
+      }
+      input
+      {
+        position: relative; /* to make a stacking context */
+        outline: none;
+        box-shadow: none;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        background: transparent;
+        border: none;
+        color: var(--paper-input-container-input-color, var(--primary-text-color));
+        -webkit-appearance: none;
+        text-align: inherit;
+        vertical-align: bottom;
+        /* Firefox sets a min-width on the input, which can cause layout issues */
+        min-width: 0;
+        @apply --paper-font-subhead;
+        @apply --paper-input-container-input;
+      }
+      input::-webkit-input-placeholder {
+        color: var(--paper-input-container-color, var(--secondary-text-color));
+      }
+      input:-moz-placeholder {
+        color: var(--paper-input-container-color, var(--secondary-text-color));
+      }
+      input::-moz-placeholder {
+        color: var(--paper-input-container-color, var(--secondary-text-color));
+      }
+      input:-ms-input-placeholder {
+        color: var(--paper-input-container-color, var(--secondary-text-color));
+      }
+
       toggle-icon {
         color: gray;
+        width: 24px;
+        height: 24px;
         --paper-icon-button: {
-          padding: 2px;
-          width: 26px;
-          height: 26px;
+          padding: 0px;
+          width: 24px;
+          height: 24px;
         };
       }
     </style>
 
-    <paper-input-container id="container" disabled\$="[[disabled]]" invalid="[[invalid]]" no-label-float="[[noLabelFloat]]" always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]" auto-validate\$="[[autoValidate]]">
+    <paper-input-container id="container" disabled\$="[[disabled]]" no-label-float="[[noLabelFloat]]" always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]" invalid="[[invalid]]" auto-validate\$="[[autoValidate]]">
 
-      <label hidden\$="[[!label]]">[[label]]</label>
+      <label slot="label" hidden\$="[[!label]]">[[label]]</label>
 
-      <input is="iron-input" id="input" bind-value="{{value}}" disabled\$="[[disabled]]" invalid="{{invalid}}" validator="[[validator]]" type="password" required\$="[[required]]" autocomplete\$="[[autocomplete]]" autofocus\$="[[autofocus]]" inputmode\$="[[inputmode]]" minlength\$="[[minlength]]" maxlength\$="[[maxlength]]" name\$="[[name]]" placeholder\$="[[placeholder]]" readonly\$="[[readonly]]" size\$="[[size]]" autocapitalize\$="[[autocapitalize]]" autocorrect\$="[[autocorrect]]" aria-labelledby\$="[[_ariaLabelledBy]]" aria-describedby\$="[[_ariaDescribedBy]]">
+      <span id="template-placeholder"></span>
 
-      <toggle-icon suffix\$="[[suffix]]" prefix\$="[[prefix]]" noink="" id="reveal" icon="gold-password-input:visibility" icon-checked="gold-password-input:visibility-off" hidden\$="[[!reveal]]" checked="{{_checked}}" animation="flip-horizontal">
-      </toggle-icon>
-
-      <template is="dom-if" if="[[errorMessage]]">
-        <paper-input-error id="error">[[errorMessage]]</paper-input-error>
+      <template is="dom-if" if="[[prefix]]">
+        <toggle-icon slot="prefix" noink="" id="reveal" icon="gold-password-input:visibility" icon-checked="gold-password-input:visibility-off" hidden\$="[[!reveal]]" checked="{{_checked}}" animation="flip-horizontal">
+        </toggle-icon>
+      </template>
+      <template is="dom-if" if="[[suffix]]">
+        <toggle-icon slot="suffix" noink="" id="reveal" icon="gold-password-input:visibility" icon-checked="gold-password-input:visibility-off" hidden\$="[[!reveal]]" checked="{{_checked}}" animation="flip-horizontal">
+        </toggle-icon>
       </template>
 
-      <template is="dom-if" if="[[strengthMeter]]">
-        <gold-password-input-strength-meter id="strength" strength-meter-labels="[[strengthMeterLabels]]">
-        </gold-password-input-strength-meter>
-      </template>
+      <div slot="add-on">
+        <template is="dom-if" if="[[errorMessage]]">
+          <paper-input-error id="error">[[errorMessage]]</paper-input-error>
+        </template>
+
+        <template is="dom-if" if="[[warnCapsLock]]">
+          <gold-password-input-warning id="warning" warning="{{_isCapsLock}}">
+            Caps Lock is currently on.
+          </gold-password-input-warning>
+        </template>
+
+        <template is="dom-if" if="[[strengthMeter]]">
+          <gold-password-input-strength-meter id="strength" strength-meter-labels="[[strengthMeterLabels]]" min-strength-meter-score-label="[[minStrengthMeterScoreLabel]]" no-label="[[noLabel]]" use-progress="[[useProgress]]" disable-tooltip="[[disableTooltip]]" warning="{{_computeWarning(warnCapsLock,_isCapsLock)}}">
+          </gold-password-input-strength-meter>
+        </template>
+      </div>
 
     </paper-input-container>
-`,
+  </template>
 
+  <template id="v0">
+      <input is="iron-input" id="input" slot="input" value="{{value::input}}" aria-labelledby\$="[[_ariaLabelledBy]]" aria-describedby\$="[[_ariaDescribedBy]]" required\$="[[required]]" bind-value="{{value}}" name\$="[[name]]" autocomplete\$="[[autocomplete]]" type="password" disabled\$="[[disabled]]" invalid="{{invalid}}" autofocus\$="[[autofocus]]" inputmode\$="[[inputmode]]" placeholder\$="[[placeholder]]" validator="[[validator]]" readonly\$="[[readonly]]" minlength\$="[[minlength]]" maxlength\$="[[maxlength]]" size\$="[[size]]" autocapitalize\$="[[autocapitalize]]" autocorrect\$="[[autocorrect]]">
+  </template>
+
+  <template id="v1">
+      <iron-input id="input" slot="input" bind-value\$="{{value}}" validator="[[validator]]" invalid\$="{{invalid}}">
+        <input id="nativeInput" value="{{value::input}}" aria-labelledby\$="[[_ariaLabelledBy]]" aria-describedby\$="[[_ariaDescribedBy]]" required\$="[[required]]" name\$="[[name]]" autocomplete\$="[[autocomplete]]" type="password" disabled\$="[[disabled]]" autofocus\$="[[autofocus]]" inputmode\$="[[inputmode]]" placeholder\$="[[placeholder]]" readonly\$="[[readonly]]" minlength\$="[[minlength]]" maxlength\$="[[maxlength]]" size\$="[[size]]" autocapitalize\$="[[autocapitalize]]" autocorrect\$="[[autocorrect]]">
+      </iron-input>
+  </template>
+
+
+</dom-module>`;
+
+document.head.appendChild($_documentContainer.content);
+Polymer({
   is: 'gold-password-input',
 
   behaviors: [
@@ -130,6 +213,18 @@ Polymer({
   ],
 
   properties: {
+    /**
+    * The label for this input.
+    */
+    label: {
+      type: String,
+      value: 'Password'
+    },
+
+    value: {
+      type: String,
+      observer: '_onValueChanged'
+    },
     /**
      * Set to true to show a strength meter.
      */
@@ -170,7 +265,85 @@ Polymer({
     _checked: {
       type: Boolean,
       observer: '_checkedChanged'
+    },
+    /**
+     * Min strength meter score label (used on validate).
+     */
+    minStrengthMeterScoreLabel: String,
+    /**
+    * Controls whether the tooltip is rendered or not.
+    */
+    disableTooltip: {
+      type: Boolean,
+      value: false
+    },
+    /**
+    * Controls whether not to use labels to show the strength result.
+    */
+    noLabel: {
+      type: Boolean,
+      value: false
+    },
+    /**
+    * Controls whether to use a progress bar to show the strength result.
+    */
+    useProgress: {
+      type: Boolean,
+      value: false
+    },
+    /**
+    * Controls whether to show a warning when Caps Lock is on.
+    */
+    warnCapsLock: {
+      type: Boolean,
+      value: false
+    },
+    /**
+    * Internal value reflecting the Caps Lock state.
+    */
+    _isCapsLock: {
+      type: Boolean,
+      notify: true,
+      value: false
     }
+  },
+
+  beforeRegister: function() {
+    var template = DomModule.import('gold-password-input', 'template');
+    var version = PolymerElement ? 'v1' : 'v0';
+    var inputTemplate = DomModule.import('gold-password-input', 'template#' + version);
+    var inputPlaceholder = template.content.querySelector('#template-placeholder');
+    if (inputPlaceholder) {
+      inputPlaceholder.parentNode.replaceChild(inputTemplate.content, inputPlaceholder);
+    }
+  },
+
+  validate() {
+    let strengthValidation = true;
+    if (this.strengthMeter && this.minStrengthMeterScoreLabel) {
+      strengthValidation = this.shadowRoot.querySelector('gold-password-input-strength-meter').validate();
+    }
+    if (strengthValidation && PaperInputBehavior[2].validate.bind(this)()) {
+      this.invalid = false;
+      return true;
+    }
+    this.invalid = true;
+    return false;
+  },
+
+  /**
+  * Returns a reference to the focusable element. Overridden from PaperInputBehavior
+  * to correctly focus the native input.
+  */
+  get _focusableElement() {
+    return PolymerElement ? this.inputElement._inputElement : this.inputElement;
+  },
+
+  // Note: This event is only available in the 2.0 version of this element.
+  // In 1.0, the functionality of `_onIronInputReady` is done in
+  // PaperInputBehavior::attached.
+  listeners: {
+    'iron-input-ready': '_onIronInputReady'
   },
 
   ready: function() {
@@ -183,19 +356,75 @@ Polymer({
     if (this.suffix && this.prefix) {
       this.prefix = false;
     }
+    if (this.value && !PolymerElement) {
+      this._handleAutoValidate();
+    }
+    this.addEventListener('keypress', this._checkCapsLock)
+  },
+
+  _onIronInputReady: function() {
+    // Only validate when attached if the input already has a value.
+    if (!!this.inputElement.bindValue) {
+      this._handleAutoValidate();
+    // Assign an empty string value if no value so if it becomes time
+    // to validate it is not undefined.
+    } else {
+      this.value = '';
+    }
   },
 
   attached: function() {
-    // this prevent tabbing issue since paperInputBehavior is forcing focus on input element...
-    this.$.reveal.$.checked.tabIndex = -1;
-    this.$.reveal.$.unchecked.tabIndex = -1;
+    beforeNextRender(this, function() {
+      // this prevent tabbing issue since paperInputBehavior is forcing focus on input element...
+      if (this.reveal) {
+        let revealElement = this.shadowRoot.querySelector('#reveal')
+        revealElement.$.unchecked.tabIndex = -1;
+        revealElement.$.checked.tabIndex = -1;
+      }
+    });
   },
 
   _checkedChanged: function(checked) {
     if (checked) {
       this.$.input.type = "text";
+      this.$.nativeInput.type = "text";
     } else {
       this.$.input.type = "password";
+      this.$.nativeInput.type = "password";
     }
+  },
+
+  /**
+  * A handler that is called on input
+  */
+  _onValueChanged: function(value, oldValue) {
+    this.invalid = false;
+    // The initial property assignment is handled by `ready`.
+    if (oldValue == undefined || value === oldValue)
+      return;
+
+    //Ensure value is a string
+    value = value ? value.toString() : '';
+
+    // Note: this will call _onValueChanged again, which will move the
+    // cursor to the end of the value. Correctly adjust the caret afterwards.
+    this.updateValueAndPreserveCaret(value.trim());
+
+    this._handleAutoValidate();
+  },
+
+  _checkCapsLock: function(e) {
+    var myKeyCode = e.which ? e.which : ( e.keyCode ? e.keyCode : ( e.charCode ? e.charCode : 0 ) );
+    var myShiftKey = e.shiftKey || ( e.modifiers && ( e.modifiers & 4 ) );
+    var charStr = String.fromCharCode(myKeyCode);
+    if ( (charStr.toUpperCase() == charStr ) && ( charStr.toLowerCase() != charStr ) && !myShiftKey ) {
+      this._isCapsLock = true
+    } else {
+      this._isCapsLock = false
+    }
+  },
+
+  _computeWarning: function(warnCapsLock, isCapsLock) {
+    return warnCapsLock && isCapsLock
   }
 });

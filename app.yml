@@ -1,19 +1,4 @@
-application: toiletevolution
-version: 1
-runtime: php55
-api_version: 1
-threadsafe: true
-module: default
-
-skip_files:
-- ^(.*/)?composer\.(phar|lock|json)$
-- logs
-- ^\.(bowerrc|editorconfig|gitignore)
-- bower.json
-- package.json
-- polymer.json
-  tests
-  .git
+runtime: php82
 
 handlers:
 - url: /favicon\.ico
@@ -26,15 +11,18 @@ handlers:
 - url: /images
   static_dir: public/images
 
+- url: /zxcvbn/dist
+  static_dir: public/scripts/zxcvbn/dist
+
 - url: /(.*).(html|js|json|css)
   static_files: public/\1.\2
   upload: public/(.*)\.(html|js|json|css)
 
 - url: /(api|admin|auth)/.*
-  script: public/index.php
+  script: auto
 
 - url: /index\.php
-  script: public/index.php
+  script: auto
 
 - url: /
   static_files: public/index.html

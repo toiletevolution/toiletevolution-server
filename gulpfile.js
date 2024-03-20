@@ -20,7 +20,7 @@ const aglio = require('gulp-aglio');
 const {PolymerProject, getOptimizeStreams, HtmlSplitter} = require('polymer-build');
 const mergeStream = require('merge-stream');
 const gulpif = require('gulp-if');
- 
+
 const project = new PolymerProject(require('./polymer.json'));
 const htmlSplitter = new HtmlSplitter();
 
@@ -73,6 +73,7 @@ gulp.task('with-api-key', function() {
   return gulp
         .src(['.tmp/public/elements/te-admin.js', '.tmp/public/elements/te-devices.js'], {base: '.'})
         .pipe(replace('api-key=""', 'api-key="'+process.env.APIKEY+'"'))
+        .pipe(replace('key="YOUR_API_KEY"', 'key="'+process.env.APIKEY+'"'))
         .pipe(gulp.dest('.'));
 });
 

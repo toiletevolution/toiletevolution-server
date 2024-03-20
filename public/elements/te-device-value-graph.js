@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import {html} from '@polymer/polymer/lib/utils/html-tag.js';
-import '@google-web-components/google-chart/google-chart.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/paper-styles/paper-styles.js';
 import moment from 'moment';

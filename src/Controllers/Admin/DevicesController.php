@@ -1,20 +1,25 @@
 <?php
 namespace ToiletEvolution\Controllers\Admin;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use ToiletEvolution\Renderer\JsonRenderer;
 use ToiletEvolution\Models\Device;
 use ToiletEvolution\Services\DeviceService;
 
 class DevicesController
 {
-  protected $ci;
+  protected ContainerInterface $ci;
+  private JsonRenderer $renderer;
 
   public function __construct(ContainerInterface $ci)
   {
     $this->ci = $ci;
+    $this->renderer = new JsonRenderer();
   }
 
-  public function index($request, $response, $args)
+  public function index(ServerRequestInterface $request, ResponseInterface $response, array $args)
   {
     $deviceModel = $this->ci->get(Device::class);
     $user = $this->ci->get('session')->get('current_user');
@@ -23,10 +28,10 @@ class DevicesController
       return $device->toArrayWithoutSecret();
     }, $deviceModel->byCreatedBy($user));
 
-    return $response->withJson($data);
+    return $this->renderer->json($response, $data)->withStatus(200);
   }
 
-  public function add($request, $response, $args)
+  public function add(ServerRequestInterface $request, ResponseInterface $response, array $args)
   {
     $user = $this->ci->get('session')->get('current_user');
     $parsedBody = $request->getParsedBody();
@@ -37,12 +42,12 @@ class DevicesController
       return $response->withStatus(400);
     }
     // Build a new entity
-    $device = $service->createDevice($parsedBody, $user);
+    $service->createDevice($parsedBody, $user);
 
     return $response->withStatus(201);
   }
 
-  public function get($request, $response, $args)
+  public function get(ServerRequestInterface $request, ResponseInterface $response, array $args)
   {
     $deviceModel = $this->ci->get(Device::class);
     $user = $this->ci->get('session')->get('current_user');
@@ -52,10 +57,10 @@ class DevicesController
       $data = $device->toArrayWithoutSecret();
     }
 
-    return $response->withJson($data, empty($data)?404:200);
+    return $this->renderer->json($response, $data)->withStatus(empty($data)?404:200);
   }
 
-  public function delete($request, $response, $args)
+  public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args)
   {
     $result = 404;
     $deviceModel = $this->ci->get(Device::class);

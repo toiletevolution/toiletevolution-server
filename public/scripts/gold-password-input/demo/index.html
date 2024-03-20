@@ -7,28 +7,55 @@
 
     <title>gold-password-input demo</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+
+    <script type="module" src="../../../@polymer/paper-styles/color.js"></script>
+    <script type="module" src="../../../@polymer/paper-styles/default-theme.js"></script>
+    <script type="module" src="../../../@polymer/paper-styles/demo-pages.js"></script>
+    <script type="module" src="../../../@polymer/paper-styles/typography.js"></script>
+    <script type="module" src="../../../@polymer/paper-styles/shadow.js"></script>
 
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../paper-styles/color.html">
 
-    <link rel="import" href="../gold-password-input.html">
-    <link rel="import" href="../gold-password-input-validator.html">
+    <script type="module" src="../gold-password-input.js"></script>
+    <script type="module" src="../gold-password-input-validator.js"></script>
 
-    <style is="custom-style" include="demo-pages-shared-styles">
+    <!-- FIXME(polymer-modulizer):
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+        -->
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<style is="custom-style" include="demo-pages-shared-styles">
       .vertical-section-container {
         min-width: 480px;
       }
-    </style>
+    </style>`;
+
+document.head.appendChild($_documentContainer.content);
+</script>
   </head>
   <body unresolved>
     <!-- Shared validator custom element -->
-    <gold-password-input-validator
-      pattern="[a-zA-Z0-9]*">
-    </gold-password-input-validator>
+    <script type="module">
+const $_documentContainer = document.createElement('template');
 
-    <div class="vertical-section-container centered">
+$_documentContainer.innerHTML = `<gold-password-input-validator pattern="[a-zA-Z0-9]*">
+    </gold-password-input-validator>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
+
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<div class="vertical-section-container centered">
       <h4>Standard</h4>
       <demo-snippet class="centered-demo">
         <template>
@@ -39,25 +66,14 @@
       <h4>With Validation</h4>
       <demo-snippet class="centered-demo">
         <template>
-          <gold-password-input
-            label="minlength='6', maxlength='24'"
-            required
-            auto-validate
-            minlength="6"
-            maxlength="24"
-            error-message="The password must contain at least 6 characters">
+          <gold-password-input label="minlength='6', maxlength='24'" required="" auto-validate="" minlength="6" maxlength="24" error-message="The password must contain at least 6 characters">
           </gold-password-input>
         </template>
       </demo-snippet>
 
       <demo-snippet class="centered-demo">
         <template>
-          <gold-password-input
-            label='only letters and digits'
-            required
-            auto-validate
-            validator="gold-password-input-validator"
-            error-message="The password must only contains letters and digits">
+          <gold-password-input label="only letters and digits" required="" auto-validate="" validator="gold-password-input-validator" error-message="The password must only contain letters and digits">
           </gold-password-input>
         </template>
       </demo-snippet>
@@ -65,39 +81,28 @@
       <h4>With Strength Meter</h4>
       <demo-snippet class="centered-demo">
         <template>
-          <gold-password-input
-            label="With strength-meter"
-            strength-meter>
+          <gold-password-input label="With strength-meter" strength-meter="">
           </gold-password-input>
         </template>
       </demo-snippet>
 
       <demo-snippet class="centered-demo">
         <template>
-          <gold-password-input
-            label="With strength-meter and custom label"
-            strength-meter
-            strength-meter-labels='{
-              "Label": "Symbol",
-              "None": "Nature",
-              "VeryWeak": "VolksWagen",
-              "Weak": "Winner",
-              "Medium": "Meow",
-              "Strong": "Superman",
-              "VeryStrong": "VerSus"}'>
+          <gold-password-input label="With strength-meter and custom label" strength-meter="" strength-meter-labels="{
+              &quot;Label&quot;: &quot;Symbol&quot;,
+              &quot;None&quot;: &quot;Nature&quot;,
+              &quot;VeryWeak&quot;: &quot;VolksWagen&quot;,
+              &quot;Weak&quot;: &quot;Winner&quot;,
+              &quot;Medium&quot;: &quot;Meow&quot;,
+              &quot;Strong&quot;: &quot;Superman&quot;,
+              &quot;VeryStrong&quot;: &quot;VerSus&quot;}">
           </gold-password-input>
         </template>
       </demo-snippet>
 
       <demo-snippet class="centered-demo">
         <template>
-          <gold-password-input
-            label="With strength-meter and only letters and digits"
-            required
-            auto-validate
-            validator="gold-password-input-validator"
-            strength-meter
-            error-message="The password must only contains letters and digits">
+          <gold-password-input label="With strength-meter and only letters and digits" required="" auto-validate="" validator="gold-password-input-validator" strength-meter="" error-message="The password must only contain letters and digits">
           </gold-password-input>
         </template>
       </demo-snippet>
@@ -105,23 +110,41 @@
       <h4>With reveal functionality</h4>
       <demo-snippet class="centered-demo">
         <template>
-          <gold-password-input
-            label="With reveal"
-            reveal suffix>
+          <gold-password-input label="With reveal" reveal="" suffix="">
           </gold-password-input>
         </template>
       </demo-snippet>
       <demo-snippet class="centered-demo">
         <template>
-          <gold-password-input
-            label="With reveal and strength-meter"
-            reveal prefix
-            strength-meter>
+          <gold-password-input label="With reveal and strength-meter" reveal="" prefix="" strength-meter="" disable-tooltip="">
           </gold-password-input>
         </template>
       </demo-snippet>
 
+      <h4>With progress bar functionality</h4>
+      <demo-snippet class="centered-demo">
+        <template>
+          <gold-password-input label="With progress" reveal="" suffix="" strength-meter="" use-progress="">
+          </gold-password-input>
+        </template>
+      </demo-snippet>
+      <demo-snippet class="centered-demo">
+        <template>
+          <gold-password-input label="With progress but no Label" reveal="" prefix="" strength-meter="" disable-tooltip="" use-progress="" no-label="">
+          </gold-password-input>
+        </template>
+      </demo-snippet>
 
-    </div>
+      <h4>With Caps Lock detection</h4>
+      <demo-snippet class="centered-demo">
+        <template>
+          <gold-password-input label="With progress" reveal="" suffix="" strength-meter="" use-progress="" warn-caps-lock="">
+          </gold-password-input>
+        </template>
+      </demo-snippet>
+    </div>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
   </body>
 </html>

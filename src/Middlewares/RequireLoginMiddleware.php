@@ -1,11 +1,17 @@
 <?php
 namespace ToiletEvolution\Middlewares;
 
-class RequireLoginMiddleware
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Slim\Psr7\Response;
+
+class RequireLoginMiddleware implements MiddlewareInterface
 {
   private $redirectIfNotLogin;
   private $session;
-  
+
   /**
    * @param  string       $redirectIfNotLogin  redirect to the url if user didn't login
    * @param  \RKA\Session $session             session
@@ -19,14 +25,14 @@ class RequireLoginMiddleware
   /**
    * RequireLogin middleware invokable class
    *
-   * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
-   * @param  \Psr\Http\Message\ResponseInterface      $response PSR7 response
-   * @param  callable                                 $next     Next middleware
+   * @param  Psr\Http\Message\ServerRequestInterface  $request PSR7 request
+   * @param  Psr\Http\Server\RequestHandlerInterface    $handler PSR-15 request handler
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return Psr\Http\Message\ResponseInterface
    */
-  public function __invoke($request, $response, $next)
+  public function process(Request $request, RequestHandler $handler): ResponseInterface
   {
+    $response = new Response();
     if(empty($this->session->get('current_user')))
     {
       $response = $response
@@ -35,7 +41,7 @@ class RequireLoginMiddleware
     }
     else
     {
-      $response = $next($request, $response);
+      $response = $handler->handle($request);
     }
 
     return $response;

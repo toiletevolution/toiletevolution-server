@@ -7,18 +7,26 @@ use GuzzleHttp\Psr7\Response;
 use Helmich\Psr7Assert\Psr7Assertions;
 use Slim\Route;
 use GDS\Store;
-  
-class DeviceAuthenticatorTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DeviceAuthenticatorTest extends TestCase
 {
   use Psr7Assertions;
 
   private $target;
   private $stubDevice;
-  
-  public function setUp()
+
+  /**
+   * @before
+   */
+  public function before()
   {
-    parent::setUp();
-    $this->stubDevice = $this->getMockBuilder('Store')->setMethods(['fetchById'])->getMock();
+    $this->stubDevice = $this->getMockBuilder(Store::class)
+      ->disableOriginalConstructor()
+      ->disableOriginalClone()
+      ->disableArgumentCloning()
+      ->disallowMockingUnknownTypes()
+      ->onlyMethods(['fetchById'])->getMock();
     $this->target = new DeviceAuthenticator($this->stubDevice);
   }
 
@@ -30,7 +38,7 @@ class DeviceAuthenticatorTest extends \PHPUnit_Framework_TestCase
     $data->password = password_hash('password', PASSWORD_DEFAULT);
     $this->stubDevice->expects($this->once())->method('fetchById')->with($this->equalTo('username'))->willReturn($data);
 
-    assertTrue($this->target->__invoke(['user' => 'username', 'password' => 'password']));
+    $this->assertTrue($this->target->__invoke(['user' => 'username', 'password' => 'password']));
   }
 
   public function testShouldReturnFalseIfPasswordNotMatched()
@@ -41,6 +49,6 @@ class DeviceAuthenticatorTest extends \PHPUnit_Framework_TestCase
     $data->password = password_hash('password', PASSWORD_DEFAULT);
     $this->stubDevice->expects($this->once())->method('fetchById')->with($this->equalTo('username'))->willReturn($data);
 
-    assertFalse($this->target->__invoke(['user' => 'username', 'password' => 'missing']));
+    $this->assertFalse($this->target->__invoke(['user' => 'username', 'password' => 'missing']));
   }
 }

@@ -1,27 +1,34 @@
 <?php
 namespace ToiletEvolution\Controllers;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use ToiletEvolution\Renderer\JsonRenderer;
 use Carbon\Carbon;
+use ToiletEvolution\Services\DeviceValuesService;
 
 class DeviceValuesController
 {
-  protected $ci;
-  private $memcache;
+  protected ContainerInterface $ci;
+  private $redis;
+  private DeviceValuesService $deviceValuesService;
+  private JsonRenderer $renderer;
 
   public function __construct(ContainerInterface $ci)
   {
     $this->ci = $ci;
-    $this->memcache = $this->ci->get(\Memcached::class);
+    $this->redis = $this->ci->get(\Redis::class);
+    $this->deviceValuesService = $this->ci->get(DeviceValuesService::class);
+    $this->renderer = new JsonRenderer();
   }
 
-  public function get($request, $response, $args)
+  public function get(ServerRequestInterface $request, ResponseInterface $response, array $args)
   {
     $id = $args['id'];
-    $bucketName = $this->ci->get('settings')['storage']['name'];
-    $fileName = "gs://{$bucketName}/${id}.json";
+    $fileName = $this->deviceValuesService->getFileName($id);
 
-    $cache = $this->memcache->get($fileName);
+    $cache = $this->redis->get($fileName);
     if ($cache === false) {
       if(file_exists($fileName)) {
         $data = json_decode(file_get_contents($fileName), true);
@@ -29,6 +36,7 @@ class DeviceValuesController
         $data = [];
       }
     } else {
+      $cache = unserialize($cache);
       $data = $cache['data'];
     }
 
@@ -42,17 +50,16 @@ class DeviceValuesController
       return $date->gt($expired);
     }));
 
-    return $response->withJson($filtered, empty($filtered)?204:200);
+    return $this->renderer->json($response, $filtered)->withStatus(empty($filtered)?204:200);
   }
 
-  public function add($request, $response, $args)
+  public function add(ServerRequestInterface $request, ResponseInterface $response, array $args)
   {
     $id = $args['id'];
-    $bucketName = $this->ci->get('settings')['storage']['name'];
-    $fileName = "gs://{$bucketName}/${id}.json";
+    $fileName = $this->deviceValuesService->getFileName($id);
     $cacheCount = 0;
 
-    $cache = $this->memcache->get($fileName);
+    $cache = $this->redis->get($fileName);
     if ($cache === false) {
       if(file_exists($fileName)) {
         $data = json_decode(file_get_contents($fileName), true);
@@ -60,6 +67,7 @@ class DeviceValuesController
         $data = [];
       }
     } else {
+      $cache = unserialize($cache);
       $data = $cache['data'];
       $cacheCount = $cache['count'];
     }
@@ -82,7 +90,7 @@ class DeviceValuesController
       file_put_contents($fileName, json_encode($filtered));
       $cacheCount = 30;
     }
-    $this->memcache->set($fileName, ['data' => $filtered, 'count' => ($cacheCount - 1)]);
+    $this->redis->set($fileName, serialize(['data' => $filtered, 'count' => ($cacheCount - 1)]));
 
     return $response->withStatus(201);
   }

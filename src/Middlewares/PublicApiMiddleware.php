@@ -1,20 +1,24 @@
 <?php
 namespace ToiletEvolution\Middlewares;
 
-class PublicApiMiddleware
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Psr\Http\Server\MiddlewareInterface;
+use Slim\Psr7\Response;
+
+class PublicApiMiddleware implements MiddlewareInterface
 {
   /**
    * Public api middleware invokable class
    *
-   * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
-   * @param  \Psr\Http\Message\ResponseInterface      $response PSR7 response
-   * @param  callable                                 $next     Next middleware
+   * @param  Psr\Http\Message\ServerRequestInterface  $request PSR7 request
+   * @param  Psr\Http\Server\RequestHandlerInterface    $handler PSR-15 request handler
    *
-   * @return \Psr\Http\Message\ResponseInterface
+   * @return Slim\Psr7\Response
    */
-  public function __invoke($request, $response, $next)
+  public function process(Request $request, RequestHandler $handler): Response
   {
-    $response = $next($request, $response);
+    $response = $handler->handle($request);
     return $response
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')

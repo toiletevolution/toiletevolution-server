@@ -12,9 +12,9 @@ The given pattern will be used to check the value of the password against.
   then delete this comment!
 */
 import '@polymer/polymer/polymer-legacy.js';
-import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
 
-import {IronValidatorBehavior} from '@polymer/iron-validator-behavior/iron-validator-behavior.js';
+import { IronValidatorBehavior } from '@polymer/iron-validator-behavior/iron-validator-behavior.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 Polymer({
   is: 'gold-password-input-validator',
 

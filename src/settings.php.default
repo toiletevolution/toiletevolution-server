@@ -7,17 +7,22 @@ return [
         'logger' => [
             'name' => 'toilet-evolution',
         ],
-        
+
         'oauth' => [
             'clientId'     => 'PLEASE SET YOUR CLIENT ID',
             'clientSecret' => 'PLEASE SET YOUR CLIENT SECRET',
             'redirectUri'  => 'http://localhost:8888/auth/google/callback', // PLEASE CHANGE URI
             'hostedDomain' => 'http://localhost:8888',                      // PLEASE CHANGE DOMAIN
         ],
-        
+
         'storage' => [
             'name' => 'toiletevolution.appspot.com'
         ],
-        
+
+        'redis' => [
+            'host' => 'redis-99999.c999.us-central1-1.gce.cloud.redislabs.com', // PLEASE CHANGE URI
+            'port' => 10409, // PLEASE CHANGE PORT
+            'password' => '*********', // PLEASE CHANGE PASSWORD
+        ],
     ],
 ];

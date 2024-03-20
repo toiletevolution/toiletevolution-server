@@ -15,15 +15,23 @@ https://cloud.google.com/sdk/docs/?hl=ja
 
 またSDKを実行するために `python` が必要になります。バージョン情報などは上記公式ドキュメントを参照してください。
 
-### PHP 5.5
+### PHP 8.2
 
-GAEでサポートされているPHPのバージョンが5.5のため、ローカルにも同じバージョンのPHPが必要になります。
+GAEでサポートされている最新PHPのバージョンが8.2のため、ローカルにも同じバージョンのPHPが必要になります。
 
-以下のようなPHP環境切り替えツールを使って、バージョン5.5のPHPを用意してください。
+以下のようなPHP環境切り替えツールを使って、バージョン8.2のPHPを用意してください。
 
 - anyenv
 - phpenv
 - phpbrew(Mac OSXの場合のみ)
+
+#### 拡張
+
+Redis の拡張をインストールしておくこと
+
+```
+$ pecl install redis
+```
 
 ### Node.js
 
@@ -56,7 +64,7 @@ export APIKEY=GoogleのAPIキー
 ```
 
 `src/settings.php.default` ファイルをコピーして `src/settings.php` にして、以下の環境設定を変更してください。
-`oauth` の設定は、現時点ではGoogle+のみ有効となっています。
+`oauth` の設定は、現時点ではGoogleのみ有効となっています。
 
 ```php
 <?php
@@ -72,14 +80,16 @@ return [
         'oauth' => [
             'clientId'     => 'PLEASE SET YOUR CLIENT ID',
             'clientSecret' => 'PLEASE SET YOUR CLIENT SECRET',
-            'redirectUri'  => 'http://localhost:8888/auth/google/callback', // PLEASE CHANGE URI
-            'hostedDomain' => 'http://localhost:8888',                      // PLEASE CHANGE DOMAIN
+            'redirectUri'  => 'http://localhost:8888/auth/google/callback' // PLEASE CHANGE URI
         ],
         
         'storage' => [
             'name' => 'toiletevolution.appspot.com'
         ],
-        
+
+        'redis' => [
+            'host' => 'redis://<username>:<password>@redis-13431.c1.asia-northeast1-1.gce.cloud.redislabs.com:13431' // PLEASE CHANGE URI
+        ],
     ],
 ];
 ```
@@ -122,3 +132,37 @@ $ npm start
 $ npm test
 ```
 
+### Redis の起動
+
+```
+$ docker run -e REDIS_ARGS="--requirepass redis" -p 6379:6379 redis/redis-stack:latest
+```
+
+### データストアの起動
+
+```
+$ gcloud beta emulators datastore start
+$ $(gcloud beta emulators datastore env-init)
+```
+
+テストが終了したら以下のコマンドで環境変数を削除できる
+
+```
+$ $(gcloud beta emulators datastore env-unset)
+```
+
+### PHPUnitの実行
+
+```
+composer run-script t
+```
+
+### 新しいバージョンへのデプロイ
+
+バージョンが 2 の場合かつ、トラフィックを古いバージョンのままにするとき
+
+```
+npm run build
+cd ./tmp
+gcloud app deploy --project toiletevolution --version 2 --no-promote --appyaml=app.yml
+```

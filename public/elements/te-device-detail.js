@@ -1,8 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import {Polymer} from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import {html} from '@polymer/polymer/lib/utils/html-tag.js';
-import '../scripts/google-map/google-map.js';
-import '../scripts/google-map/google-map-marker.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-icons/iron-icons.js';
@@ -60,9 +58,10 @@ Polymer({
         </template>
       </div>
       <div>
-        <google-map map="{{map}}" latitude="[[device.latitude]]" longitude="[[device.longitude]]" zoom="17" api-key="">
-          <google-map-marker slot="google-map-marker" id="location" latitude="[[device.latitude]]" longitude="[[device.longitude]]"></google-map-marker>
-        </google-map>
+        <gmpx-api-loader key="YOUR_API_KEY"></gmpx-api-loader>
+        <gmp-map id="map" zoom="17" center="[[deviceLatLng(device)]]" map-id="DEMO_MAP_ID">
+          <gmp-advanced-marker id="location" position="[[deviceLatLng(device)]]"></gmp-advanced-marker>
+        </gmp-map>
       </div>
       <div>
         <ul>
@@ -104,6 +103,10 @@ Polymer({
       this._deviceIdChanged(this.deviceId);
       this.$.ajax_detail.generateRequest();
     }
+  },
+
+  deviceLatLng: function(device) {
+    return {lat: device.latitude, lng: device.longitude};
   },
 
   observers: [
